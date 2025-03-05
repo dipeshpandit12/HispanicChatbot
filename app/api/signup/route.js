@@ -6,7 +6,6 @@ import User from "@/models/user";
 export async function POST(req) {
     try {
         const body = await req.json();
-        console.log("Signup request body:", body); // Debugging
 
         const { email, password } = body;
 

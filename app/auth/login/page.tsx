@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FormEvent, useState } from 'react'
+import GoogleLoginButton from '@/Components/GoogleLogin'
 
 const Login = () => {
     const router = useRouter()
@@ -70,6 +71,15 @@ const Login = () => {
                         Sign in
                     </button>
                 </form>
+                <div className="mt-4 flex items-center">
+                    <div className="flex-grow border-t border-gray-300"></div>
+                    <span className="px-4 text-sm text-gray-500">Or</span>
+                    <div className="flex-grow border-t border-gray-300"></div>
+                </div>
+
+                <div className="mt-4 flex justify-center">
+                    <GoogleLoginButton />
+                </div>
                 <div className="mt-4 text-sm">
                     Don&apos;t have an account?{' '}
                     <Link href="/auth/signup" className="text-blue-600 hover:underline">

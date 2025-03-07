@@ -1,26 +1,40 @@
 import mongoose from 'mongoose';
 
 const businessSchema = new mongoose.Schema({
-    businessLocation: {
-        street: { type: String, required: true },
-        city: { type: String, required: true },
-        state: { type: String, required: true },
-        zipCode: { type: String, required: true },
-        country: { type: String, required: true }
-    },
-    businessType: {
-        type: String,
-        required: true,
-        enum: ['Retail', 'Service', 'Manufacturing', 'Technology', 'Food', 'Other']
-    },
-    platforms: [{
-        type: String,
-        enum: ['Website', 'Facebook', 'Instagram', 'LinkedIn', 'Twitter', 'Other']
-    }],
     employeeSize: {
-        type: Number,
+        type: String,
         required: true,
-        min: 1
+        enum: ['0-10', '11-50', '51-100', '101-1000', '1000+']
+    },
+    businessLocation: {
+        type: String,
+        required: true
+    },
+    industry: {
+        type: String,
+        required: true,
+        enum: [
+            'agriculture',
+            'mining',
+            'utilities',
+            'construction',
+            'manufacturing',
+            'wholesale',
+            'retail',
+            'transportation',
+            'information',
+            'finance',
+            'realestate',
+            'professional',
+            'management',
+            'administrative',
+            'educational',
+            'healthcare',
+            'arts',
+            'accommodation',
+            'other',
+            'public'
+        ]
     },
     createdAt: {
         type: Date,
@@ -28,4 +42,6 @@ const businessSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Business', businessSchema);
+const Business = mongoose.model('Business', businessSchema);
+
+export default Business;

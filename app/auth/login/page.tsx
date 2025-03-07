@@ -11,25 +11,28 @@ const Login = () => {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
-
         try {
             const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify({ email, password }),
             })
 
-            if (response.ok) {
-                console.log('Login successful')
-                router.push('/pages/businessData')
+            const data = await response.json();
 
+            if (response.ok) {
+                console.log('Login successful');
+                router.push('/pages/businessData');
             } else {
-                console.error('Login failed')
+                console.error('Login failed:', data.error);
+                alert(data.error || 'Login failed');
             }
         } catch (error) {
-            console.error('Error during login:', error)
+            console.error('Error during login:', error);
+            alert('An error occurred during login');
         }
     }
 

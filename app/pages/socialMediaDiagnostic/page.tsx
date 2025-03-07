@@ -1,7 +1,7 @@
 'use client'
 
 
-const HomePage = () => {
+const socialMediaDiagnostic = () => {
     return (
         <>
                 This is a socialMediaDiagnostic page
@@ -9,4 +9,4 @@ const HomePage = () => {
     );
 };
 
-export default HomePage;
+export default socialMediaDiagnostic;

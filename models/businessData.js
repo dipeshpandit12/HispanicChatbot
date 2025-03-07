@@ -1,10 +1,14 @@
 import mongoose from 'mongoose';
 
 const businessSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+    },
     employeeSize: {
         type: String,
-        required: true,
-        enum: ['0-10', '11-50', '51-100', '101-1000', '1000+']
+        required: true
     },
     businessLocation: {
         type: String,
@@ -12,29 +16,7 @@ const businessSchema = new mongoose.Schema({
     },
     industry: {
         type: String,
-        required: true,
-        enum: [
-            'agriculture',
-            'mining',
-            'utilities',
-            'construction',
-            'manufacturing',
-            'wholesale',
-            'retail',
-            'transportation',
-            'information',
-            'finance',
-            'realestate',
-            'professional',
-            'management',
-            'administrative',
-            'educational',
-            'healthcare',
-            'arts',
-            'accommodation',
-            'other',
-            'public'
-        ]
+        required: true
     },
     createdAt: {
         type: Date,
@@ -42,6 +24,8 @@ const businessSchema = new mongoose.Schema({
     }
 });
 
-const Business = mongoose.model('Business', businessSchema);
+businessSchema.index({ userId: 1 });
+
+const Business = mongoose.models.Business || mongoose.model('Business', businessSchema);
 
 export default Business;

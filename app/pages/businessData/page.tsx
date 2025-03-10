@@ -144,8 +144,11 @@ const BusinessData = () => {
         </button>
       </form>
 
-      <div className="mt-6">
+      <div className="mt-6 flex items-center justify-between">
         <Logout />
+        <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md shadow-sm transition-colors duration-200 ease-in-out" onClick={() => router.push('/pages/socialMediaDiagnostic')}>
+          Next
+        </button>
       </div>
     </div>
   );

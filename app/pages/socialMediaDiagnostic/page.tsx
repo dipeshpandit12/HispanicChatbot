@@ -1,49 +1,163 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+
+const AUTH_URLS = {
+    Instagram: '/auth/instagram',
+    Facebook: '/auth/facebook',
+    Twitter: '/auth/twitter',
+    LinkedIn: '/auth/linkedin'
+};
+
+interface SocialAccounts {
+    Instagram: string;
+    Facebook: string;
+    Twitter: string;
+    LinkedIn: string;
+}
 
 const SocialMediaDiagnostic = () => {
     const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string>('');
+    const [socialAccounts, setSocialAccounts] = useState<SocialAccounts>({
+        Instagram: '',
+        Facebook: '',
+        Twitter: '',
+        LinkedIn: ''
+    });
+
+    useEffect(() => {
+        const fetchSocialAccounts = async () => {
+            try {
+                const response = await fetch('/api/socialMediaDiagnostics');
+                if (!response.ok) throw new Error('Failed to fetch social accounts');
+                const data = await response.json();
+                if (data.socialAccounts) {
+                    setSocialAccounts(data.socialAccounts);
+                }
+            } catch (err) {
+                const errorMessage = err instanceof Error ? err.message : 'Failed to fetch social accounts';
+                setError(errorMessage);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchSocialAccounts();
+    }, []);
+
+    const handleAuthRedirect = async (platform: keyof typeof AUTH_URLS) => {
+        try {
+            setIsLoading(true);
+            const params = new URLSearchParams({
+                client_id: process.env.NEXT_PUBLIC_CLIENT_ID || '',
+                response_type: 'code',
+                state: platform.toLowerCase(),
+                redirect_uri: `/auth/callback/${platform.toLowerCase()}`
+            });
+
+            // Update backend before redirecting
+            await fetch('/api/socialMediaDiagnostics', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    socialAccounts: {
+                        ...socialAccounts,
+                        [platform]: 'pending'
+                    }
+                })
+            });
+
+            router.push(`${AUTH_URLS[platform]}?${params.toString()}`);
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+            setError(`Failed to initiate authentication: ${errorMessage}`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+                <div className="text-white">Loading...</div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+                <div className="text-red-500">{error}</div>
+            </div>
+        );
+    }
+
+    const hasConnectedAccounts = Object.values(socialAccounts).some(account => account && account !== 'pending');
 
     return (
         <div className="min-h-screen bg-gray-900 p-4 sm:p-6 md:p-8">
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-center text-white">
-                    Connect Your Business Social Media Accounts
+                    Manage Your Business Social Media Accounts
                 </h1>
-                <button
-                    onClick={() => setIsLoading(true)}
-                    disabled={isLoading}
-                    className="w-full mb-6 p-3 rounded-lg transition-colors duration-200
-                             text-white font-medium bg-blue-600 hover:bg-blue-700"
-                >
-                    {isLoading ? 'Checking accounts...' : 'Check Connected Accounts'}
-                </button>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-                    {['Instagram', 'Facebook', 'Twitter', 'LinkedIn'].map((platform) => (
-                        <button
+                <div className="grid grid-cols-1 gap-4">
+                    {Object.entries(socialAccounts).map(([platform, username]) => (
+                        <div
                             key={platform}
-                            onClick={() => setIsLoading(true)}
-                            disabled={isLoading}
-                            className="w-full p-3 rounded-lg transition-colors duration-200
-                                     text-white font-medium bg-gray-700 hover:bg-gray-600
-                                     flex items-center justify-center"
+                            className="p-4 rounded-lg bg-gray-700 flex justify-between items-center"
                         >
-                            {`Connect ${platform}`}
-                        </button>
+                            <span className="text-white font-medium">{platform}</span>
+                            <div className="flex items-center space-x-4">
+                                <span className="text-sm text-gray-300">
+                                    {username 
+                                        ? username === 'pending' 
+                                            ? 'Connecting...' 
+                                            : `Connected as ${username}`
+                                        : 'Not Connected'
+                                    }
+                                </span>
+                                <button
+                                    onClick={() => handleAuthRedirect(platform as keyof typeof AUTH_URLS)}
+                                    disabled={username === 'pending'}
+                                    className={`px-4 py-2 rounded ${
+                                        username
+                                            ? username === 'pending'
+                                                ? 'bg-gray-500 cursor-not-allowed'
+                                                : 'bg-green-600 hover:bg-green-700'
+                                            : 'bg-blue-600 hover:bg-blue-700'
+                                    } text-white text-sm transition-colors`}
+                                >
+                                    {username
+                                        ? username === 'pending'
+                                            ? 'Connecting...'
+                                            : 'Reconnect'
+                                        : 'Connect Account'
+                                    }
+                                </button>
+                            </div>
+                        </div>
                     ))}
                 </div>
 
                 <button
-                    onClick={() => router.push('/pages/analytics')}
-                    disabled={isLoading}
-                    className="w-full mt-8 p-3 rounded-lg transition-colors duration-200
-                             text-white font-medium bg-gray-800"
+                    onClick={() => router.push('/analytics')}
+                    disabled={!hasConnectedAccounts}
+                    className={`w-full mt-8 p-3 rounded-lg transition-colors duration-200
+                             text-white font-medium ${
+                                 hasConnectedAccounts 
+                                     ? 'bg-blue-600 hover:bg-blue-700' 
+                                     : 'bg-gray-800 cursor-not-allowed'
+                             }`}
                 >
-                    Connect at least one account to proceed
+                    {hasConnectedAccounts 
+                        ? 'Continue to Analytics' 
+                        : 'Connect at least one account to proceed'}
                 </button>
             </div>
         </div>

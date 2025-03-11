@@ -67,7 +67,6 @@ const SocialMediaDiagnostic = () => {
                 body: JSON.stringify({
                     socialAccounts: {
                         ...socialAccounts,
-                        [platform]: 'pending'
                     }
                 })
             });

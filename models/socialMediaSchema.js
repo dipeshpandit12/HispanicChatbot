@@ -7,26 +7,16 @@ const socialMediaSchema = new mongoose.Schema({
         ref: 'User'
     },
     socialAccounts: {
-        Instagram: {
-            type: String,
-            default: ''
+        facebook: {
+            accessToken: String,
+            pageIds: [String],
+            expiresAt: Date
         },
-        Facebook: {
-            type: String,
-            default: ''
-        },
-        Twitter: {
-            type: String,
-            default: ''
-        },
-        LinkedIn: {
-            type: String,
-            default: ''
+        instagram: {
+            businessAccountId: String,
+            accessToken: String,
+            expiresAt: Date
         }
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     },
     updatedAt: {
         type: Date,
@@ -34,8 +24,4 @@ const socialMediaSchema = new mongoose.Schema({
     }
 });
 
-socialMediaSchema.index({ userId: 1 });
-
-const SocialMedia = mongoose.models.SocialMedia || mongoose.model('SocialMedia', socialMediaSchema);
-
-export default SocialMedia;
+export default mongoose.models.SocialMedia || mongoose.model('SocialMedia', socialMediaSchema);

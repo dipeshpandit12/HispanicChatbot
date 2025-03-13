@@ -27,6 +27,19 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  socialAuth: {
+    facebook: {
+      accessToken: String,
+      refreshToken: String,
+      pageIds: [String],
+      expiresAt: Date
+    },
+    instagram: {
+      businessAccountId: String,
+      accessToken: String,
+      expiresAt: Date
+    }
   }
 }, {
   collection: 'userData'

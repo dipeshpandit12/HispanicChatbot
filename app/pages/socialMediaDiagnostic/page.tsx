@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 const AUTH_URLS = {
+    Facebook: `https://www.facebook.com/v22.0/dialog/oauth`,
     Instagram: '/auth/instagram',
-    Facebook: '/auth/facebook',
     Twitter: '/auth/twitter',
     LinkedIn: '/auth/linkedin'
 };
@@ -51,30 +51,22 @@ const SocialMediaDiagnostic = () => {
     const handleAuthRedirect = async (platform: keyof typeof AUTH_URLS) => {
         try {
             setIsLoading(true);
-            const params = new URLSearchParams({
-                client_id: process.env.NEXT_PUBLIC_CLIENT_ID || '',
-                response_type: 'code',
-                state: platform.toLowerCase(),
-                redirect_uri: `/auth/callback/${platform.toLowerCase()}`
-            });
 
-            // Update backend before redirecting
-            await fetch('/api/socialMediaDiagnostics', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    socialAccounts: {
-                        ...socialAccounts,
-                    }
-                })
-            });
+            if (platform === 'Facebook') {
+                const params = new URLSearchParams({
+                    client_id: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID!,
+                    redirect_uri: `${window.location.origin}/api/auth/callback/facebook`,
+                    scope: 'email,pages_show_list,instagram_basic,instagram_manage_insights',
+                    response_type: 'code'
+                });
 
-            router.push(`${AUTH_URLS[platform]}?${params.toString()}`);
+                window.location.href = `${AUTH_URLS.Facebook}?${params.toString()}`;
+                return;
+            }
+
+            // ... handle other platforms
         } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-            setError(`Failed to initiate authentication: ${errorMessage}`);
+            setError(err instanceof Error ? err.message : 'Authentication failed');
         } finally {
             setIsLoading(false);
         }

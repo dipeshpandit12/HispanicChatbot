@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('authToken')?.value;
   const hasBusinessData = request.cookies.get('hasBusinessData')?.value;
 
-  const businessDataRequiredPaths = ['/chatInterface', '/socialMediaDiagnostic'];
+  const businessDataRequiredPaths = ['/chatInterface', '/socialMediaDiagnostic', '/pages/social-analytics'];
 
   // 1. If user is authenticated
   if (token) {

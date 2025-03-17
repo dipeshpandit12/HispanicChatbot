@@ -52,5 +52,6 @@ const issuesAndResourcesSchema = new mongoose.Schema({
     }
 });
 
-const IssuesAndResources = mongoose.model('IssuesAndResources', issuesAndResourcesSchema);
+const IssuesAndResources = mongoose.models.IssuesAndResources || mongoose.model('IssuesAndResources', issuesAndResourcesSchema);
+
 export default IssuesAndResources;

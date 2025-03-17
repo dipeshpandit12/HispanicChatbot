@@ -1,21 +1,84 @@
-'use client'
+'use client';
 import { useRouter } from 'next/navigation';
-
-
+import { MessageSquare, Share2, BookOpen, HelpCircle } from 'lucide-react';
 
 const HomePage = () => {
     const router = useRouter();
+    const handleLoginRedirect = () => {
+        router.push('/auth/login');
+    };
+
+    const features = [
+        {
+            title: "Business Diagnostics",
+            description: "Get insights into your business performance.",
+            icon: HelpCircle,
+            href: "/questions",
+            color: "bg-red-500",
+        },
+        {
+            title: "Social Media",
+            description: "Boost your business’s online presence.",
+            icon: Share2,
+            href: "/social-media",
+            color: "bg-yellow-400",
+        },
+        {
+            title: "Resource Center",
+            description: "Find valuable tools and guides.",
+            icon: BookOpen,
+            href: "/resources",
+            color: "bg-green-600",
+        },
+        {
+            title: "AI Assistant",
+            description: "Chat with our AI-powered business helper.",
+            icon: MessageSquare,
+            href: "/chatbot",
+            color: "bg-blue-600",
+        },
+    ];
+
     return (
-      <div className="bg-gray-100 min-h-screen flex flex-col justify-center items-center text-center p-6">
-        <h1 className="text-4xl font-bold text-blue-600">Grow Your Business with AI</h1>
-        <p className="text-gray-700 mt-4 max-w-2xl">
-          Hispanic Chatbot helps local businesses streamline their social media marketing with AI-powered automation.
-        </p>
-        <button className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-blue-700" onClick={() => router.push('/auth/login')}>
-          Get Started
-        </button>
-      </div>
+        <div className="min-h-screen" style={{ backgroundColor: '#F5F1EE' }}>
+            <div className="max-w-7xl mx-auto px-6 py-16">
+                {/* Title */}
+                <div className="text-center mb-16">
+                    <h1 className="text-5xl font-extrabold text-gray-900 mb-6">
+                        Hispanic Business Chatbot
+                    </h1>
+                    <p className="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed">
+                        Empowering Hispanic businesses to thrive with cutting-edge AI-powered solutions tailored to your needs.
+                    </p>
+                </div>
+
+                {/* Feature Cards */}
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {features.map((feature) => (
+                        <a key={feature.title} href={feature.href} className="block">
+                            <div className="p-8 bg-white shadow-lg rounded-lg hover:shadow-xl transition-all">
+                                <div className={`p-4 rounded-full w-fit ${feature.color}`}>
+                                    <feature.icon className="h-8 w-8 text-white" />
+                                </div>
+                                <h3 className="mt-6 text-2xl font-semibold text-gray-800">{feature.title}</h3>
+                                <p className="mt-2 text-gray-600">{feature.description}</p>
+                            </div>
+                        </a>
+                    ))}
+                </div>
+
+                {/* CTA Button */}
+                <div className="mt-20 text-center">
+                    <button
+                        onClick={handleLoginRedirect}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-xl font-medium transition-colors shadow-md"
+                    >
+                        Let&apos;s Get Started
+                    </button>
+                </div>
+            </div>
+        </div>
     );
-  };
+};
 
 export default HomePage;

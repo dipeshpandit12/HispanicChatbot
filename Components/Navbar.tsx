@@ -35,7 +35,7 @@ const Navbar = () => {
   }, [pathname]);
 
   return (
-    <nav className="bg-blue-600 text-white p-4 shadow-lg fixed top-0 w-full z-50">
+    <nav className="bg-[#501214] text-white p-4 shadow-lg fixed top-0 w-full z-50 font-[Halis Grotesque]">
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-xl font-bold">Hispanic Chatbot</h1>
         <div className="space-x-4">
@@ -44,7 +44,7 @@ const Navbar = () => {
           {isAuthenticated ? (
             <Logout />
           ) : (
-            <Link href="/auth/login" className="bg-white text-blue-600 px-4 py-2 rounded-lg">
+            <Link href="/auth/login" className="bg-white text-[#501214] px-4 py-2 rounded-lg">
               Login
             </Link>
           )}

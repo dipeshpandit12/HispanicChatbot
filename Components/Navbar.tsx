@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -37,14 +37,17 @@ const Navbar = () => {
   return (
     <nav className="bg-[#501214] text-white p-4 shadow-lg fixed top-0 w-full z-50 font-[Halis Grotesque]">
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-xl font-bold">Hispanic Chatbot</h1>
+        <h1 className="text-xl font-bold text-white">Hispanic Chatbot</h1>
         <div className="space-x-4">
-          <Link href="/">Home</Link>
-          <Link href="/pages/about">About</Link>
+          <Link href="/" className="text-white hover:underline">Home</Link>
+          <Link href="/pages/about" className="text-white hover:underline">About</Link>
           {isAuthenticated ? (
             <Logout />
           ) : (
-            <Link href="/auth/login" className="bg-white text-[#501214] px-4 py-2 rounded-lg">
+            <Link
+              href="/auth/login"
+              className="bg-[#AC9155] text-white px-4 py-2 rounded-lg hover:bg-[#EBBA45] transition-colors duration-200"
+            >
               Login
             </Link>
           )}

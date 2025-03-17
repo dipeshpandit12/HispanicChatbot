@@ -1,24 +1,138 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@400;700&family=IBM+Plex+Mono:wght@400;700&display=swap');
 
 @theme {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: 'Poppins', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-mono: 'IBM Plex Mono', monospace;
 }
 
 :root {
-  --background: #F5F1EE ;
-  --foreground: #171717;
+  /* Main Colors */
+  --primary-dark: #501214;
+  --primary-light: #AC9155;
+  
+  /* Secondary Colors */
+  --secondary-red: #EB2E47;
+  --secondary-yellow: #EBBA45;
+  
+  /* Tertiary Colors */
+  --tertiary-pink: #F9DCDE;
+  --tertiary-coral: #EA664D;
+  --tertiary-dark-green: #266725;
+  --tertiary-green: #419E69;
+  --tertiary-teal: #6EA095;
+  --tertiary-light-blue: #BFF3FD;
+  --tertiary-dark-blue: #007096;
+  
+  /* Web-Exclusive Colors */
+  --web-dark-gray: #363534;
+  --web-light-beige: #F5F1EE;
+  --web-brown: #6A5638;
+  
+  /* Base Theme */
+  --background: var(--web-light-beige);
+  --foreground: var(--primary-dark);
+  --accent: var(--secondary-red);
+  --muted: var(--primary-light);
+  --link: var(--tertiary-dark-blue);
+  --success: var(--tertiary-green);
+  --warning: var(--secondary-yellow);
+  --error: var(--secondary-red);
+  --border: var(--primary-light);
+  --input: var(--tertiary-light-blue);
+  --focus: var(--tertiary-teal);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #f3f4f6;
-    --foreground: #171717;
+    --background: var(--web-dark-gray);
+    --foreground: var(--web-light-beige);
+    --accent: var(--secondary-yellow);
+    --muted: var(--tertiary-teal);
+    --link: var(--tertiary-light-blue);
+    --border: var(--tertiary-coral);
+    --input: var(--tertiary-dark-blue);
+    --focus: var(--primary-light);
   }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Halis Grotesque', sans-serif;
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-serif);
+  color: var(--primary-dark);
+}
+
+code, pre {
+  font-family: var(--font-mono);
+}
+
+a {
+  color: var(--link);
+  transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+button, .button {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+/* Utility classes for your color palette */
+.bg-primary-dark { background-color: var(--primary-dark); }
+.bg-primary-light { background-color: var(--primary-light); }
+.bg-secondary-red { background-color: var(--secondary-red); }
+.bg-secondary-yellow { background-color: var(--secondary-yellow); }
+.bg-tertiary-pink { background-color: var(--tertiary-pink); }
+.bg-tertiary-coral { background-color: var(--tertiary-coral); }
+.bg-tertiary-dark-green { background-color: var(--tertiary-dark-green); }
+.bg-tertiary-green { background-color: var(--tertiary-green); }
+.bg-tertiary-teal { background-color: var(--tertiary-teal); }
+.bg-tertiary-light-blue { background-color: var(--tertiary-light-blue); }
+.bg-tertiary-dark-blue { background-color: var(--tertiary-dark-blue); }
+.bg-web-dark-gray { background-color: var(--web-dark-gray); }
+.bg-web-light-beige { background-color: var(--web-light-beige); }
+.bg-web-brown { background-color: var(--web-brown); }
+
+.text-primary-dark { color: var(--primary-dark); }
+.text-primary-light { color: var(--primary-light); }
+.text-secondary-red { color: var(--secondary-red); }
+.text-secondary-yellow { color: var(--secondary-yellow); }
+.text-tertiary-pink { color: var(--tertiary-pink); }
+.text-tertiary-coral { color: var(--tertiary-coral); }
+.text-tertiary-dark-green { color: var(--tertiary-dark-green); }
+.text-tertiary-green { color: var(--tertiary-green); }
+.text-tertiary-teal { color: var(--tertiary-teal); }
+.text-tertiary-light-blue { color: var(--tertiary-light-blue); }
+.text-tertiary-dark-blue { color: var(--tertiary-dark-blue); }
+.text-web-dark-gray { color: var(--web-dark-gray); }
+.text-web-light-beige { color: var(--web-light-beige); }
+.text-web-brown { color: var(--web-brown); }
+
+.border-primary-dark { border-color: var(--primary-dark); }
+.border-primary-light { border-color: var(--primary-light); }
+.border-web-dark-gray { border-color: var(--web-dark-gray); }
+.border-web-light-beige { border-color: var(--web-light-beige); }
+.border-web-brown { border-color: var(--web-brown); }
+
+/* Navbar-specific styles */
+nav, nav * {
+  color: white !important;
+}
+
+nav a {
+  color: white !important;
+  text-decoration: none;
+}
+
+nav a:hover {
+  text-decoration: underline;
 }

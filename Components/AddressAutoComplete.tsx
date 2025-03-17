@@ -60,7 +60,7 @@ export default function AddressAutoComplete({ value, onChange }: AddressAutoComp
       />
       {error && <p className="text-red-500 text-sm">{error}</p>}
       {suggestions.length > 0 && (
-        <ul className="absolute w-full bg-black border rounded-md shadow-md max-h-48 overflow-y-auto z-10">
+        <ul className="absolute w-full bg-white border rounded-md shadow-md max-h-48 overflow-y-auto z-10">
           {suggestions.map((place, index) => (
             <li
               key={index}
@@ -69,7 +69,7 @@ export default function AddressAutoComplete({ value, onChange }: AddressAutoComp
                 setQuery(place.display_name);
                 setSuggestions([]);
               }}
-              className="p-2 cursor-pointer hover:bg-black hover:text-white"
+              className="p-2 cursor-pointer text-black"
             >
               {place.display_name}
             </li>

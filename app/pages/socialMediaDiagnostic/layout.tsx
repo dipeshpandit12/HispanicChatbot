@@ -11,10 +11,8 @@ export default function SocialMediaDiagnosticLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="min-h-screen p-4">
-            <main className="container mx-auto">
-                {children}
-            </main>
+        <div className="min-h-screen flex items-center justify-center">
+            {children}
         </div>
     );
 }

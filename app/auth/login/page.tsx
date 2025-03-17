@@ -3,11 +3,17 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FormEvent, useState } from 'react'
 import GoogleLoginButton from '@/Components/GoogleLogin'
+import Alert from '@/Components/Alert'
 
 const Login = () => {
     const router = useRouter()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [alertState, setAlertState] = useState({
+        isOpen: false,
+        message: '',
+        type: 'error' as 'success' | 'error' | 'warning'
+    })
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
@@ -28,15 +34,32 @@ const Login = () => {
                 router.push('/pages/businessData');
             } else {
                 console.error('Login failed:', data.error);
-                alert(data.error || 'Login failed');
+                setAlertState({
+                    isOpen: true,
+                    message: data.error || 'Login failed',
+                    type: 'error'
+                });
             }
         } catch (error) {
             console.error('Error during login:', error);
-            alert('An error occurred during login');
+            setAlertState({
+                isOpen: true,
+                message: 'An error occurred during login',
+                type: 'error'
+            });
         }
     }
 
     return (
+        <>
+
+            <Alert
+                isOpen={alertState.isOpen}
+                message={alertState.message}
+                type={alertState.type}
+                onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+            />
+
             <div className="bg-white p-8 rounded-lg shadow-lg w-96 border-2 border-blue-600">
                 <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">Login</h1>
                 <form className="space-y-4" onSubmit={handleSubmit}>
@@ -89,6 +112,7 @@ const Login = () => {
                     </Link>
                 </div>
             </div>
+            </>
     )
 }
 

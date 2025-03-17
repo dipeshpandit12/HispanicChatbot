@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 const OtherResourcesPage = () => {
   const resources = [
@@ -58,10 +59,11 @@ const OtherResourcesPage = () => {
               key={resource.id}
               className="flex items-start space-x-6 bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all"
             >
-              {/* Thumbnail */}
-              <img
+              <Image
                 src={resource.thumbnail}
                 alt={`${resource.title} thumbnail`}
+                width={128}
+                height={128}
                 className="w-32 h-32 rounded-md object-cover"
               />
 

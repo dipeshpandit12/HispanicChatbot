@@ -52,7 +52,6 @@ const Login = () => {
 
     return (
         <>
-
             <Alert
                 isOpen={alertState.isOpen}
                 message={alertState.message}
@@ -60,11 +59,11 @@ const Login = () => {
                 onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
             />
 
-            <div className="bg-white p-8 rounded-lg shadow-lg w-96 border-2 border-blue-600">
-                <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">Login</h1>
+            <div className="bg-white p-8 rounded-lg shadow-lg w-96 border-2 border-[#501214]">
+                <h1 className="text-3xl font-bold text-[#501214] mb-6 text-center">Login</h1>
                 <form className="space-y-4" onSubmit={handleSubmit}>
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                        <label htmlFor="email" className="block text-sm font-medium text-[#501214]">
                             Email
                         </label>
                         <input
@@ -73,11 +72,11 @@ const Login = () => {
                             name="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-600 focus:ring-blue-600"
+                            className="mt-1 block w-full rounded-lg border-[#AC9155] shadow-sm focus:border-[#AC9155] focus:ring-[#AC9155]"
                         />
                     </div>
                     <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                        <label htmlFor="password" className="block text-sm font-medium text-[#501214]">
                             Password
                         </label>
                         <input
@@ -86,33 +85,33 @@ const Login = () => {
                             name="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-600 focus:ring-blue-600"
+                            className="mt-1 block w-full rounded-lg border-[#AC9155] shadow-sm focus:border-[#AC9155] focus:ring-[#AC9155]"
                         />
                     </div>
                     <button
                         type="submit"
-                        className="w-full flex justify-center py-3 px-6 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        className="w-full flex justify-center py-3 px-6 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white bg-[#EB2E47] hover:bg-[#EBBA45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#266725]"
                     >
                         Sign in
                     </button>
                 </form>
                 <div className="mt-6 flex items-center">
                     <div className="flex-grow border-t border-gray-300"></div>
-                    <span className="px-4 text-sm text-gray-700">Or</span>
+                    <span className="px-4 text-sm text-[#501214]">Or</span>
                     <div className="flex-grow border-t border-gray-300"></div>
                 </div>
 
                 <div className="mt-6 flex justify-center">
                     <GoogleLoginButton />
                 </div>
-                <div className="mt-6 text-sm text-center text-gray-700">
+                <div className="mt-6 text-sm text-center text-[#501214]">
                     Don&apos;t have an account?{' '}
-                    <Link href="/auth/signup" className="text-blue-600 hover:text-blue-700 hover:underline font-medium">
+                    <Link href="/auth/signup" className="text-[#EB2E47] hover:text-[#419E69] hover:underline font-medium">
                         Sign up
                     </Link>
                 </div>
             </div>
-            </>
+        </>
     )
 }
 

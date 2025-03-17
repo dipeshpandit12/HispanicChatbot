@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import AddressAutoComplete from "@/Components/AddressAutoComplete";
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 
 const employeeSizeOptions = [
   { value: '0-10', label: '0-10 employees' },
@@ -36,7 +36,7 @@ const industryOptions = [
 ];
 
 const BusinessData = () => {
-  const router= useRouter();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     employeeSize: '',
     businessLocation: '',
@@ -66,7 +66,7 @@ const BusinessData = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // Important for cookies
+        credentials: 'include',
         body: JSON.stringify(formData)
       });
 
@@ -87,16 +87,16 @@ const BusinessData = () => {
       console.error('Error saving business data:', error);
       alert(error instanceof Error ? error.message : 'Error saving business information. Please try again.');
     }
-};
+  };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Business Information</h1>
+    <div className="max-w-2xl mx-auto p-6 bg-[#F5F1EE] rounded-lg shadow-lg border-2 border-[#501214]">
+      <h1 className="text-3xl font-bold text-[#501214] mb-6 text-center">Business Information</h1>
 
       <form className="space-y-6" onSubmit={handleSubmit}>
         <div>
-          <label className="block mb-2 font-medium">Employee Size:</label>
-          <div className="flex flex-wrap gap-3 p-4 border rounded-md">
+          <label className="block mb-2 font-medium text-[#501214]">Employee Size:</label>
+          <div className="flex flex-wrap gap-3 p-4 border rounded-md border-[#AC9155]">
             {employeeSizeOptions.map(option => (
               <label key={option.value} className="inline-flex items-center space-x-2 cursor-pointer">
                 <input
@@ -105,16 +105,16 @@ const BusinessData = () => {
                   value={option.value}
                   checked={formData.employeeSize === option.value}
                   onChange={handleChange}
-                  className="form-radio"
+                  className="form-radio text-[#EB2E47] focus:ring-[#EBBA45]"
                 />
-                <span>{option.label}</span>
+                <span className="text-[#363534]">{option.label}</span>
               </label>
             ))}
           </div>
         </div>
 
         <div>
-          <label className="block mb-2 font-medium">Business Location:</label>
+          <label className="block mb-2 font-medium text-[#501214]">Business Location:</label>
           <AddressAutoComplete
             value={formData.businessLocation}
             onChange={handleLocationChange}
@@ -122,12 +122,12 @@ const BusinessData = () => {
         </div>
 
         <div>
-          <label className="block mb-2 font-medium">Primary Industry:</label>
+          <label className="block mb-2 font-medium text-[#501214]">Primary Industry:</label>
           <select
             name="industry"
             value={formData.industry}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded-md border-[#AC9155] focus:border-[#EB2E47] focus:ring-[#EBBA45]"
           >
             <option value="">Select Industry</option>
             {industryOptions.map(option => (
@@ -138,13 +138,19 @@ const BusinessData = () => {
           </select>
         </div>
 
-        <button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition duration-200">
+        <button
+          type="submit"
+          className="w-full bg-[#266725] hover:bg-[#419E69] text-white p-2 rounded-md transition duration-200"
+        >
           Save Business Information
         </button>
       </form>
 
       <div className="mt-6 flex items-center justify-between">
-        <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md shadow-sm transition-colors duration-200 ease-in-out" onClick={() => router.push('/pages/socialMediaDiagnostic')}>
+        <button
+          className="px-4 py-2 bg-[#363534] hover:bg-[#6A5638] text-white rounded-md shadow-sm transition-colors duration-200 ease-in-out"
+          onClick={() => router.push('/pages/socialMediaDiagnostic')}
+        >
           Next
         </button>
       </div>

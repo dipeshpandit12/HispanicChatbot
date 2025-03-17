@@ -81,29 +81,29 @@ const IssuesPage = () => {
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {problems.map((problem) => (
-          <Link href="/chat" key={problem._id || problem.id} className="group block">
+            <Link href={`/pages/resourcesPage?id=${problem.title}`} key={problem.title} className="group block">
             <div className="p-6 bg-white shadow-lg rounded-lg hover:shadow-xl transition-all">
               <div className={`mb-4 inline-flex items-center justify-center rounded-full p-4 ${problem.colorClasses || 'bg-gray-100'}`}>
-                {problem.icon ? (
-                  <div dangerouslySetInnerHTML={{ __html: problem.icon }} />
-                ) : (
-                  <div className="w-6 h-6 bg-gray-300 rounded-full" />
-                )}
+              {problem.icon ? (
+                <div dangerouslySetInnerHTML={{ __html: problem.icon }} />
+              ) : (
+                <div className="w-6 h-6 bg-gray-300 rounded-full" />
+              )}
               </div>
               <h3 className="text-xl font-semibold text-gray-800">{problem.title}</h3>
               <p className="mt-2 text-gray-600">{problem.description}</p>
-                <div className="mt-4 flex items-center text-blue-600 group-hover:text-blue-700">
-                  Get Guidance
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </div>
+              <div className="mt-4 flex items-center text-blue-600 group-hover:text-blue-700">
+                Get Guidance
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </div>
               </div>
             </Link>
           ))}

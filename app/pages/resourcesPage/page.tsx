@@ -7,6 +7,7 @@ interface Solution {
   id: string;
   title: string;
   description: string;
+  longDescription: string; // Added for a longer summary
   link: string;
   type: string;
   thumbnail: string;
@@ -18,7 +19,7 @@ const ResourcesPage = () => {
     <Suspense 
       fallback={
         <div className="flex justify-center items-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
         </div>
       }
     >
@@ -68,24 +69,24 @@ const ResourcesContent = () => {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen bg-[#F5F1EE] font-sans">
+    <div className="min-h-screen bg-background font-body pt-24"> {/* Added pt-24 to lower the page */}
       <div className="mx-auto max-w-6xl px-6 py-16">
-        <h1 className="mb-8 text-center text-4xl font-extrabold text-gray-900">
+        <h1 className="mb-8 text-center text-4xl font-heading text-primary">
           Hispanic Business Resources
         </h1>
-        <p className="mb-12 text-center text-lg text-gray-700">
+        <p className="mb-12 text-center text-lg text-secondary">
           Explore these tailored resources to help grow your business and overcome challenges.
           Each solution is carefully curated to provide valuable insights and practical steps.
         </p>
 
         {loading && (
           <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           </div>
         )}
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded text-center">
+          <div className="bg-error-light border border-error text-error px-4 py-3 rounded text-center">
             {error}
           </div>
         )}
@@ -93,13 +94,11 @@ const ResourcesContent = () => {
         {solution && (
           <ul className="space-y-8">
             <li className="flex items-start space-x-6 bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all">
-              {solution.thumbnail && (
-                <img
-                  src={solution.thumbnail}
-                  alt={`${solution.title} thumbnail`}
-                  className="w-32 h-32 rounded-md object-cover"
-                />
-              )}
+              <img
+                src={solution.thumbnail || '/default-thumbnail.jpg'} // Fallback image
+                alt={`${solution.title} thumbnail`}
+                className="w-32 h-32 rounded-md object-cover"
+              />
 
               <div className="flex-1">
                 {solution.link ? (
@@ -107,17 +106,18 @@ const ResourcesContent = () => {
                     href={solution.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`text-2xl font-semibold hover:underline ${solution.colorClasses}`}
+                    className={`text-2xl font-semibold hover:underline text-primary`}
                   >
                     {solution.title}
                   </a>
                 ) : (
-                  <h2 className={`text-2xl font-semibold ${solution.colorClasses}`}>
+                  <h2 className={`text-2xl font-semibold text-primary`}>
                     {solution.title}
                   </h2>
                 )}
 
-                <p className="mt-2 text-gray-600 text-lg">{solution.description}</p>
+                <p className="mt-2 text-secondary text-lg">{solution.description}</p>
+                <p className="mt-4 text-gray-700 text-base">{solution.longDescription}</p> {/* Longer summary */}
 
                 <span className="mt-4 inline-block text-sm font-medium text-gray-500">
                   Type: {solution.type}

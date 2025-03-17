@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 interface Solution {
@@ -14,6 +14,20 @@ interface Solution {
 }
 
 const ResourcesPage = () => {
+  return (
+    <Suspense 
+      fallback={
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+        </div>
+      }
+    >
+      <ResourcesContent />
+    </Suspense>
+  );
+};
+
+const ResourcesContent = () => {
   const searchParams = useSearchParams();
   const [solution, setSolution] = useState<Solution | null>(null);
   const [error, setError] = useState<string>('');

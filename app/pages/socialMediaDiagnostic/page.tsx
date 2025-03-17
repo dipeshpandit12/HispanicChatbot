@@ -82,15 +82,15 @@ const SocialMediaDiagnostic = () => {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-                <div className="text-white">Loading...</div>
+            <div className="min-h-screen  flex items-center justify-center">
+                <div className="text-black">Loading...</div>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+            <div className="min-h-screen  flex items-center justify-center">
                 <div className="text-red-500">{error}</div>
             </div>
         );
@@ -99,7 +99,7 @@ const SocialMediaDiagnostic = () => {
     const hasConnectedAccounts = Object.values(socialAccounts).some(account => account && account !== 'pending');
 
     return (
-        <div className="min-h-screen bg-gray-900 p-4 sm:p-6 md:p-8">
+        <div className="min-h-screen p-4 sm:p-6 md:p-8">
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-center text-white">
                     Manage Your Business Social Media Accounts

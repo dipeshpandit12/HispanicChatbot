@@ -90,13 +90,13 @@ const BusinessData = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-[#F5F1EE] rounded-lg shadow-lg border-2 border-[#501214]">
+    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg border-2 border-[#501214] mt-16">
       <h1 className="text-3xl font-bold text-[#501214] mb-6 text-center">Business Information</h1>
 
       <form className="space-y-6" onSubmit={handleSubmit}>
         <div>
           <label className="block mb-2 font-medium text-[#501214]">Employee Size:</label>
-          <div className="flex flex-wrap gap-3 p-4 border rounded-md border-[#AC9155]">
+          <div className="flex flex-wrap gap-3 p-4 border rounded-md border-[#AC9155] bg-white">
             {employeeSizeOptions.map(option => (
               <label key={option.value} className="inline-flex items-center space-x-2 cursor-pointer">
                 <input
@@ -127,7 +127,7 @@ const BusinessData = () => {
             name="industry"
             value={formData.industry}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md border-[#AC9155] focus:border-[#EB2E47] focus:ring-[#EBBA45]"
+            className="w-full p-2 border rounded-md border-[#AC9155] focus:border-[#EB2E47] focus:ring-[#EBBA45] bg-white"
           >
             <option value="">Select Industry</option>
             {industryOptions.map(option => (
@@ -140,7 +140,7 @@ const BusinessData = () => {
 
         <button
           type="submit"
-          className="w-full bg-[#266725] hover:bg-[#419E69] text-white p-2 rounded-md transition duration-200"
+          className="w-full bg-[#6A5638] hover:bg-[#419E69] text-white p-2 rounded-md transition duration-200"
         >
           Save Business Information
         </button>

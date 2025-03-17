@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -7,7 +7,7 @@ const AUTH_URLS = {
     Instagram: '/auth/instagram',
     Facebook: '/auth/facebook',
     Twitter: '/auth/twitter',
-    LinkedIn: '/auth/linkedin'
+    LinkedIn: '/auth/linkedin',
 };
 
 interface SocialAccounts {
@@ -25,7 +25,7 @@ const SocialMediaDiagnostic = () => {
         Instagram: '',
         Facebook: '',
         Twitter: '',
-        LinkedIn: ''
+        LinkedIn: '',
     });
 
     useEffect(() => {
@@ -55,10 +55,9 @@ const SocialMediaDiagnostic = () => {
                 client_id: process.env.NEXT_PUBLIC_CLIENT_ID || '',
                 response_type: 'code',
                 state: platform.toLowerCase(),
-                redirect_uri: `/auth/callback/${platform.toLowerCase()}`
+                redirect_uri: `/auth/callback/${platform.toLowerCase()}`,
             });
 
-            // Update backend before redirecting
             await fetch('/api/socialMediaDiagnostics', {
                 method: 'POST',
                 headers: {
@@ -67,8 +66,8 @@ const SocialMediaDiagnostic = () => {
                 body: JSON.stringify({
                     socialAccounts: {
                         ...socialAccounts,
-                    }
-                })
+                    },
+                }),
             });
 
             router.push(`${AUTH_URLS[platform]}?${params.toString()}`);
@@ -82,7 +81,7 @@ const SocialMediaDiagnostic = () => {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen  flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center">
                 <div className="text-black">Loading...</div>
             </div>
         );
@@ -90,7 +89,7 @@ const SocialMediaDiagnostic = () => {
 
     if (error) {
         return (
-            <div className="min-h-screen  flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center">
                 <div className="text-red-500">{error}</div>
             </div>
         );
@@ -99,9 +98,9 @@ const SocialMediaDiagnostic = () => {
     const hasConnectedAccounts = Object.values(socialAccounts).some(account => account && account !== 'pending');
 
     return (
-        <div className="min-h-screen p-4 sm:p-6 md:p-8">
+        <div className="min-h-screen p-4 sm:p-6 md:p-8 bg-[#F5F1EE]">
             <div className="max-w-4xl mx-auto">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-center text-white">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-center text-[#501214]">
                     Manage Your Business Social Media Accounts
                 </h1>
 
@@ -109,35 +108,33 @@ const SocialMediaDiagnostic = () => {
                     {Object.entries(socialAccounts).map(([platform, username]) => (
                         <div
                             key={platform}
-                            className="p-4 rounded-lg bg-gray-700 flex justify-between items-center"
+                            className="p-4 rounded-lg bg-white flex justify-between items-center shadow-md"
                         >
-                            <span className="text-white font-medium">{platform}</span>
+                            <span className="text-[#501214] font-medium">{platform}</span>
                             <div className="flex items-center space-x-4">
-                                <span className="text-sm text-gray-300">
-                                    {username 
-                                        ? username === 'pending' 
-                                            ? 'Connecting...' 
+                                <span className="text-sm text-[#363534]">
+                                    {username
+                                        ? username === 'pending'
+                                            ? 'Connecting...'
                                             : `Connected as ${username}`
-                                        : 'Not Connected'
-                                    }
+                                        : 'Not Connected'}
                                 </span>
                                 <button
                                     onClick={() => handleAuthRedirect(platform as keyof typeof AUTH_URLS)}
                                     disabled={username === 'pending'}
-                                    className={`px-4 py-2 rounded ${
+                                    className={`px-4 py-2 rounded-lg text-white text-sm transition-colors ${
                                         username
                                             ? username === 'pending'
-                                                ? 'bg-gray-500 cursor-not-allowed'
-                                                : 'bg-green-600 hover:bg-green-700'
-                                            : 'bg-blue-600 hover:bg-blue-700'
-                                    } text-white text-sm transition-colors`}
+                                                ? 'bg-[#6A5638] cursor-not-allowed'
+                                                : 'bg-[#007096] hover:bg-[#6EA095]'
+                                            : 'bg-[#007096] hover:bg-[#6EA095]'
+                                    }`}
                                 >
                                     {username
                                         ? username === 'pending'
                                             ? 'Connecting...'
                                             : 'Reconnect'
-                                        : 'Connect Account'
-                                    }
+                                        : 'Connect Account'}
                                 </button>
                             </div>
                         </div>
@@ -147,15 +144,14 @@ const SocialMediaDiagnostic = () => {
                 <button
                     onClick={() => router.push('/analytics')}
                     disabled={!hasConnectedAccounts}
-                    className={`w-full mt-8 p-3 rounded-lg transition-colors duration-200
-                             text-white font-medium ${
-                                 hasConnectedAccounts 
-                                     ? 'bg-blue-600 hover:bg-blue-700' 
-                                     : 'bg-gray-800 cursor-not-allowed'
-                             }`}
+                    className={`w-full mt-8 p-3 rounded-lg transition-colors duration-200 text-white font-medium ${
+                        hasConnectedAccounts
+                            ? 'bg-[#007096] hover:bg-[#6EA095]'
+                            : 'bg-[#6A5638] cursor-not-allowed'
+                    }`}
                 >
-                    {hasConnectedAccounts 
-                        ? 'Continue to Analytics' 
+                    {hasConnectedAccounts
+                        ? 'Continue to Analytics'
                         : 'Connect at least one account to proceed'}
                 </button>
             </div>

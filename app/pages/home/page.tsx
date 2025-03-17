@@ -14,33 +14,33 @@ const HomePage = () => {
             description: "Get insights into your business performance.",
             icon: HelpCircle,
             href: "/questions",
-            color: "bg-red-500",
+            color: "bg-[#EB2E47]", // Secondary Red
         },
         {
             title: "Social Media",
             description: "Boost your business’s online presence.",
             icon: Share2,
             href: "/social-media",
-            color: "bg-yellow-400",
+            color: "bg-[#EBBA45]", // Secondary Yellow
         },
         {
             title: "Resource Center",
             description: "Find valuable tools and guides.",
             icon: BookOpen,
             href: "/resources",
-            color: "bg-green-600",
+            color: "bg-[#266725]", // Tertiary Dark Green
         },
         {
             title: "AI Assistant",
             description: "Chat with our AI-powered business helper.",
             icon: MessageSquare,
             href: "/chatbot",
-            color: "bg-blue-600",
+            color: "bg-[#007096]", // Tertiary Dark Blue
         },
     ];
 
     return (
-        <div className="min-h-screen" style={{ backgroundColor: '#F5F1EE' }}>
+        <div className="min-h-screen pt-24" style={{ backgroundColor: '#F5F1EE' }}>
             <div className="max-w-7xl mx-auto px-6 py-16">
                 {/* Title */}
                 <div className="text-center mb-16">
@@ -71,7 +71,7 @@ const HomePage = () => {
                 <div className="mt-20 text-center">
                     <button
                         onClick={handleLoginRedirect}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-xl font-medium transition-colors shadow-md"
+                        className="bg-[#6A5638] hover:bg-[#419E69] text-white px-8 py-4 rounded-lg text-xl font-medium transition-colors shadow-md"
                     >
                         Let&apos;s Get Started
                     </button>

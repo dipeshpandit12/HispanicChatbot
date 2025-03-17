@@ -41,7 +41,15 @@ const issuesAndResourcesSchema = new mongoose.Schema({
         problem: problemSchema,
         solution: solutionSchema,
         additionalResources: [additionalResourceSchema]
-    }]
+    }],
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
+    }
 });
 
 const IssuesAndResources = mongoose.model('IssuesAndResources', issuesAndResourcesSchema);

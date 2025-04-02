@@ -1,18 +1,21 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import Alert from '@/Components/Alert';
 
 const StagePage = () => {
     const [stage, setStage] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [showAlert, setShowAlert] = useState(false);
+
 
     const fetchStage = async () => {
         try {
             const response = await fetch('/api/stage');
             if (!response.ok) {
                 const error = await response.json();
-                throw new Error(error.error);
+                throw new Error(error.error || 'Problem fetching data from Gemini API');
             }
             const data = await response.json();
             return data.stage;
@@ -27,8 +30,11 @@ const StagePage = () => {
             try {
                 const result = await fetchStage();
                 setStage(result);
+                setError(null);
             } catch (err: unknown) {
-                setError(err instanceof Error ? err.message : 'An unknown error occurred');
+                const errorMessage = err instanceof Error ? err.message : 'Problem fetching data from Gemini API';
+                setError(errorMessage);
+                setShowAlert(true);
             } finally {
                 setLoading(false);
             }
@@ -46,11 +52,19 @@ const StagePage = () => {
 
     if (error) {
         return (
+            <>
+            <Alert
+                isOpen={showAlert}
+                message={"Problem fetching data from Gemini API"}
+                type="error"
+                onClose={() => setShowAlert(false)}
+            />
             <div className="min-h-screen flex items-center justify-center">
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                    <p>Error: {error}</p>
+                    <p>Error: `${error}`</p>
                 </div>
             </div>
+            </>
         );
     }
 
@@ -67,6 +81,7 @@ const StagePage = () => {
     };
 
     return (
+        <>
         <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
                 <motion.div
@@ -119,6 +134,7 @@ const StagePage = () => {
                 </motion.div>
             </div>
         </div>
+        </>
     );
 };
 

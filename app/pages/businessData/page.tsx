@@ -37,6 +37,7 @@ const industryOptions = [
 
 const BusinessData = () => {
   const router = useRouter();
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     employeeSize: '',
     businessLocation: '',
@@ -58,8 +59,7 @@ const BusinessData = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     try {
       const response = await fetch('/api/businessData', {
         method: 'POST',
@@ -82,77 +82,97 @@ const BusinessData = () => {
       const data = await response.json();
       console.log('Business data saved:', data);
       alert('Business information saved successfully!');
-
     } catch (error) {
       console.error('Error saving business data:', error);
       alert(error instanceof Error ? error.message : 'Error saving business information. Please try again.');
     }
   };
 
+  const nextStep = () => setStep(prev => prev + 1);
+  const prevStep = () => setStep(prev => prev - 1);
+
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg border-2 border-[#501214] mt-16">
       <h1 className="text-3xl font-bold text-[#501214] mb-6 text-center">Business Information</h1>
 
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        <div>
-          <label className="block mb-2 font-medium text-[#501214]">Employee Size:</label>
-          <div className="flex flex-wrap gap-3 p-4 border rounded-md border-[#AC9155] bg-white">
-            {employeeSizeOptions.map(option => (
-              <label key={option.value} className="inline-flex items-center space-x-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="employeeSize"
-                  value={option.value}
-                  checked={formData.employeeSize === option.value}
-                  onChange={handleChange}
-                  className="form-radio text-[#EB2E47] focus:ring-[#EBBA45]"
-                />
-                <span className="text-[#363534]">{option.label}</span>
-              </label>
-            ))}
-          </div>
+      <div className="h-[300px] w-[500px] flex flex-col justify-between items-center mx-auto">
+        <div className="w-full h-full flex flex-col justify-center items-center">
+          {step === 1 && (
+            <div className="w-full">
+              <label className="block mb-2 font-medium text-[#501214]">Employee Size:</label>
+              <div className="flex flex-wrap gap-3 p-4 border rounded-md border-[#AC9155] bg-white">
+                {employeeSizeOptions.map(option => (
+                  <label key={option.value} className="inline-flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="employeeSize"
+                      value={option.value}
+                      checked={formData.employeeSize === option.value}
+                      onChange={handleChange}
+                      className="form-radio text-[#EB2E47] focus:ring-[#EBBA45]"
+                    />
+                    <span className="text-[#363534]">{option.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="w-full">
+              <label className="block mb-2 font-medium text-[#501214]">Business Location:</label>
+              <AddressAutoComplete
+                value={formData.businessLocation}
+                onChange={handleLocationChange}
+              />
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="w-full">
+              <label className="block mb-2 font-medium text-[#501214]">Primary Industry:</label>
+              <select
+                name="industry"
+                value={formData.industry}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md border-[#AC9155] focus:border-[#EB2E47] focus:ring-[#EBBA45] bg-white"
+              >
+                <option value="">Select Industry</option>
+                {industryOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
-        <div>
-          <label className="block mb-2 font-medium text-[#501214]">Business Location:</label>
-          <AddressAutoComplete
-            value={formData.businessLocation}
-            onChange={handleLocationChange}
-          />
+        <div className="mt-6 flex justify-between w-full">
+          {step > 1 && (
+            <button
+              onClick={prevStep}
+              className="px-4 py-2 bg-[#363534] hover:bg-[#6A5638] text-white rounded-md transition duration-200"
+            >
+              Previous
+            </button>
+          )}
+          {step < 3 ? (
+            <button
+              onClick={nextStep}
+              className="px-4 py-2 bg-[#6A5638] hover:bg-[#419E69] text-white rounded-md transition duration-200"
+            >
+              Next
+            </button>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              className="px-4 py-2 bg-[#6A5638] hover:bg-[#419E69] text-white rounded-md transition duration-200"
+            >
+              Submit
+            </button>
+          )}
         </div>
-
-        <div>
-          <label className="block mb-2 font-medium text-[#501214]">Primary Industry:</label>
-          <select
-            name="industry"
-            value={formData.industry}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md border-[#AC9155] focus:border-[#EB2E47] focus:ring-[#EBBA45] bg-white"
-          >
-            <option value="">Select Industry</option>
-            {industryOptions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-[#6A5638] hover:bg-[#419E69] text-white p-2 rounded-md transition duration-200"
-        >
-          Save Business Information
-        </button>
-      </form>
-
-      <div className="mt-6 flex items-center justify-between">
-        <button
-          className="px-4 py-2 bg-[#363534] hover:bg-[#6A5638] text-white rounded-md shadow-sm transition-colors duration-200 ease-in-out"
-          onClick={() => router.push('/pages/socialMediaDiagnostic')}
-        >
-          Next
-        </button>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
+import { processGeminiRequest } from '../geminiApi/route';
 
 export async function GET(req) {
     try {
@@ -10,28 +11,16 @@ export async function GET(req) {
         }
 
         try {
-            jwt.verify(token, process.env.JWT_SECRET);
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const result = await processGeminiRequest(decoded);
+            return NextResponse.json(result);
         } catch (error) {
-            return NextResponse.json({ error: `Invalid token: ${error.message}` }, { status: 401 });
-        }
-
-        // Call the Gemini API endpoint
-        const response = await fetch(new URL('/api/geminiApi', process.env.NEXTAUTH_URL || 'http://localhost:3000'), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Cookie': `authToken=${token}`
+            if (error.name === 'JsonWebTokenError') {
+                return NextResponse.json({ error: `Invalid token: ${error.message}` }, { status: 401 });
             }
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to fetch stage');
+            console.error('Error in stage route:', error);
+            return NextResponse.json({ error: error.message }, { status: 500 });
         }
-
-        const data = await response.json();
-        return NextResponse.json(data);
-
     } catch (error) {
         console.error('Error in stage route:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });

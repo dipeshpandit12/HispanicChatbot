@@ -16,7 +16,7 @@ export async function GET(req) {
         }
 
         // Call the Gemini API endpoint
-        const response = await fetch(new URL('/api/geminiApi', process.env.NEXTAUTH_URL), {
+        const response = await fetch(new URL(`${process.env.NEXTAUTH_URL}/api/geminiApi`), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

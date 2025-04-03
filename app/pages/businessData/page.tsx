@@ -3,6 +3,8 @@
 import { useState } from "react";
 import AddressAutoComplete from "@/Components/AddressAutoComplete";
 import { useRouter } from 'next/navigation';
+import Alert from '@/Components/Alert';
+
 
 const employeeSizeOptions = [
   { value: '0-10', label: '0-10 employees' },
@@ -43,6 +45,10 @@ const BusinessData = () => {
     businessLocation: '',
     industry: ''
   });
+  const [showAlert, setShowAlert] = useState(false);
+const [alertMessage, setAlertMessage] = useState('');
+const [alertType, setAlertType] = useState<'success' | 'error' | 'warning'>('success');
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -82,9 +88,14 @@ const BusinessData = () => {
       const data = await response.json();
       console.log('Business data saved:', data);
       alert('Business information saved successfully!');
+      setAlertType('success');
+      setAlertMessage('Business information saved successfully!');
+      setShowAlert(true);
     } catch (error) {
       console.error('Error saving business data:', error);
-      alert(error instanceof Error ? error.message : 'Error saving business information. Please try again.');
+      setAlertType('error');
+      setAlertMessage(error instanceof Error ? error.message : 'Error saving business information. Please try again.');
+      setShowAlert(true);
     }
   };
 
@@ -92,7 +103,14 @@ const BusinessData = () => {
   const prevStep = () => setStep(prev => prev - 1);
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg border-2 border-[#501214] mt-16">
+    <>
+        <Alert
+          isOpen={showAlert}
+          message={alertMessage}
+          type={alertType}
+          onClose={() => setShowAlert(false)}
+        />
+        <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg border-2 border-[#501214] mt-16">
       <h1 className="text-3xl font-bold text-[#501214] mb-6 text-center">Business Information</h1>
 
       <div className="h-[300px] w-[500px] flex flex-col justify-between items-center mx-auto">
@@ -175,6 +193,7 @@ const BusinessData = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

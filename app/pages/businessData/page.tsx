@@ -87,7 +87,6 @@ const [alertType, setAlertType] = useState<'success' | 'error' | 'warning'>('suc
 
       const data = await response.json();
       console.log('Business data saved:', data);
-      alert('Business information saved successfully!');
       setAlertType('success');
       setAlertMessage('Business information saved successfully!');
       setShowAlert(true);

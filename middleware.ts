@@ -19,7 +19,6 @@ export function middleware(request: NextRequest) {
     if (path === '/auth/login' || path === '/auth/signup') {
       return NextResponse.redirect(new URL('/pages/businessData', request.url));
     }
-
     // Check for business data requirement
     if (businessDataRequiredPaths.includes(path) && !hasBusinessData) {
       return NextResponse.redirect(new URL('/pages/businessData', request.url));

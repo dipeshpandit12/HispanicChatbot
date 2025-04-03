@@ -90,6 +90,9 @@ const [alertType, setAlertType] = useState<'success' | 'error' | 'warning'>('suc
       setAlertType('success');
       setAlertMessage('Business information saved successfully!');
       setShowAlert(true);
+      setTimeout(() => {
+        router.push('/pages/stage');
+      }, 2000);
     } catch (error) {
       console.error('Error saving business data:', error);
       setAlertType('error');

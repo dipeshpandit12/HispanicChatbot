@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Alert from '@/Components/Alert';
+import Link from 'next/link';
 
 const StagePage = () => {
     const [stage, setStage] = useState<string | null>(null);
@@ -132,6 +133,11 @@ const StagePage = () => {
                         </div>
                     </div>
                 </motion.div>
+                <Link href="/pages/issuesPage" className="mt-8 block text-center">
+                    <button className="bg-blue-400 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-500 transition duration-200">
+                        Get Personalized Guidance
+                    </button>
+                </Link>
             </div>
         </div>
         </>

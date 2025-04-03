@@ -40,6 +40,21 @@ export async function POST(req) {
             )
         ]);
 
+         // Call GeminiAPI endpoint to classify business stage
+         const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+         const geminiResponse = await fetch(`${baseUrl}/api/geminiApi`, {
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'application/json',
+                 'Authorization': `Bearer ${token}`
+             },
+             cache: 'no-store'
+         });
+
+         if (!geminiResponse.ok) {
+             console.error('Error calling GeminiAPI:', await geminiResponse.text());
+         }
+
         return NextResponse.json({
             message: 'Business data saved successfully',
             business,

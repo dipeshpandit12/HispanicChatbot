@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectToDB } from "@/utils/database";
 import jwt from "jsonwebtoken";
 import Business from "@/models/businessData";
+import BusinessStage from "@/models/BusinessStage";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function POST(req) {
@@ -64,12 +65,17 @@ export async function POST(req) {
     const validStages = ["beginner", "intermediate", "advance"];
     const stage = validStages.find((s) => text.includes(s));
 
-    if (!stage) {
-      console.error("Invalid response received:", text);
-      throw new Error("Invalid stage classification received");
-    }
+    // Save or update the business stage
+    await BusinessStage.findOneAndUpdate(
+      { userId },
+      {
+        stage,
+        updatedAt: new Date()
+      },
+      { upsert: true, new: true }
+    );
 
-    return NextResponse.json({ stage });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("API Error:", error);
     return NextResponse.json(

@@ -36,7 +36,7 @@ const IssuesPage = () => {
         })));
         setAlert({
           isOpen: true,
-          message: 'Successfully loaded business issues',
+          message: 'Successfully loaded business strategies',
           type: 'success'
         });
       } catch (err) {

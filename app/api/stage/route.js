@@ -15,13 +15,15 @@ export async function GET(req) {
             return NextResponse.json({ error: `Invalid token: ${error.message}` }, { status: 401 });
         }
 
-        // Call the Gemini API endpoint
-        const response = await fetch(new URL(`${process.env.NEXTAUTH_URL}/api/geminiApi`), {
+        // Use absolute URL for API call
+        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+        const response = await fetch(`${baseUrl}/api/geminiApi`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Cookie': `authToken=${token}`
-            }
+                'Authorization': `Bearer ${token}`
+            },
+            cache: 'no-store'
         });
 
         if (!response.ok) {

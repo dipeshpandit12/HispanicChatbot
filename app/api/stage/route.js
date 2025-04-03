@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
+import { connectToDB } from "@/utils/database";
+import BusinessStage from "@/models/BusinessStage";
 
 export async function GET(req) {
     try {
@@ -9,33 +11,24 @@ export async function GET(req) {
             return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
         }
 
-        try {
-            jwt.verify(token, process.env.JWT_SECRET);
-        } catch (error) {
-            return NextResponse.json({ error: `Invalid token: ${error.message}` }, { status: 401 });
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.userId;
+
+        await connectToDB();
+
+        const businessStage = await BusinessStage.findOne({ userId });
+
+        if (!businessStage) {
+            return NextResponse.json({ error: "Business stage not found" }, { status: 404 });
         }
 
-        // Use absolute URL for API call
-        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
-        const response = await fetch(`${baseUrl}/api/geminiApi`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            cache: 'no-store'
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to fetch stage');
-        }
-
-        const data = await response.json();
-        return NextResponse.json(data);
+        return NextResponse.json({ stage: businessStage.stage });
 
     } catch (error) {
         console.error('Error in stage route:', error);
+        if (error.name === 'JsonWebTokenError') {
+            return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+        }
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

@@ -40,7 +40,6 @@ const Navbar = () => {
       <Link href="/" className="text-xl font-bold text-white">
         Hispanic Chatbot
       </Link>
-
         <div className="space-x-4">
           <Link href="/" className="text-white hover:underline">Home</Link>
           <Link href="/pages/about" className="text-white hover:underline">About</Link>

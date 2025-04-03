@@ -37,7 +37,10 @@ const Navbar = () => {
   return (
     <nav className="bg-[#501214] text-white p-4 shadow-lg fixed top-0 w-full z-50 font-[Halis Grotesque]">
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-xl font-bold text-white">Hispanic Chatbot</h1>
+      <Link href="/" className="text-xl font-bold text-white">
+        Hispanic Chatbot
+      </Link>
+
         <div className="space-x-4">
           <Link href="/" className="text-white hover:underline">Home</Link>
           <Link href="/pages/about" className="text-white hover:underline">About</Link>

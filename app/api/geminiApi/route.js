@@ -62,7 +62,7 @@ export async function POST(req) {
     console.log("Raw Gemini response:", text);
 
     // Validate the response
-    const validStages = ["beginner", "intermediate", "advance"];
+    const validStages = ["beginner", "intermediate", "advanced"];
     const stage = validStages.find((s) => text.includes(s));
 
     // Save or update the business stage

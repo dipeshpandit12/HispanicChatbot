@@ -148,7 +148,7 @@ const StagePage = () => {
                             </div>
                         </div>
                     </motion.div>
-                    <Link href="/pages/issuesPage" className="mt-8 block text-center">
+                    <Link href="/pages/strategies" className="mt-8 block text-center">
                         <button className="bg-blue-400 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-500 transition duration-200">
                             Get Personalized Guidance
                         </button>

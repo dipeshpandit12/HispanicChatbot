@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import AddressAutoComplete from "@/Components/AddressAutoComplete";
-import { useRouter } from 'next/navigation';
 
 const employeeSizeOptions = [
   { value: '0-10', label: '0-10 employees' },
@@ -35,30 +35,259 @@ const industryOptions = [
   { value: 'public', label: 'Public Administration' }
 ];
 
+
+const socialMediaToolsOptions = [
+  { value: 'hootsuite', label: 'Hootsuite' },
+  { value: 'buffer', label: 'Buffer' },
+  { value: 'sproutsocial', label: 'Sprout Social' },
+  { value: 'canva', label: 'Canva' },
+  { value: 'other', label: 'Other' },
+];
+
+const successMetricsOptions = [
+  { value: 'engagement', label: 'Engagement metrics' },
+  { value: 'sales', label: 'Sales/conversions' },
+  { value: 'growth', label: 'Follower growth' },
+  { value: 'none', label: 'Don’t track' },
+];
+
+const documentedStrategyOptions = [
+  { value: 'yes', label: 'Yes' },
+  { value: 'no', label: 'No' },
+];
+
+const supportOptions = [
+  { value: 'strategy', label: 'Social media strategy' },
+  { value: 'content', label: 'Content creation' },
+  { value: 'setup', label: 'Account setup' },
+  { value: 'ads', label: 'Paid ads' },
+  { value: 'other', label: 'Other – please specify' },
+];
+
+const holdingBackOptions = [
+  { value: 'time', label: 'Time' },
+  { value: 'knowledge', label: 'Knowledge' },
+  { value: 'resources', label: 'Resources' },
+  { value: 'no-plan', label: 'No clear plan' },
+  { value: 'other', label: 'Other – please specify' },
+];
+
+const helpfulServicesOptions = [
+  { value: 'setup', label: 'Account setup' },
+  { value: 'strategy', label: 'Content strategy' },
+  { value: 'ads', label: 'Paid ads' },
+  { value: 'management', label: 'Ongoing management' },
+  { value: 'analytics', label: 'Analytics' },
+  { value: 'other', label: 'Other – please specify' },
+];
+
+const strategyChallengesOptions = [
+  { value: 'lack-time', label: 'Lack of time' },
+  { value: 'lack-knowledge', label: 'Lack of knowledge' },
+  { value: 'not-sure', label: 'Not sure how to get started' },
+  { value: 'no-need', label: 'Don’t see the need' },
+  { value: 'other', label: 'Other – please specify' },
+];
+
+const strategyGuidanceAreasOptions = [
+  { value: 'content', label: 'Content creation' },
+  { value: 'audience', label: 'Target audience identification' },
+  { value: 'schedule', label: 'Posting schedule' },
+  { value: 'goals', label: 'Goal setting' },
+  { value: 'tracking', label: 'Performance tracking' },
+  { value: 'other', label: 'Other – please specify' },
+];
+
 const BusinessData = () => {
   const router = useRouter();
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const [step, setStep] = useState(1); // Ensure step starts at 1
+  const [formData, setFormData] = useState<{
+    employeeSize: string;
+    industry: string;
+    socialMediaTools: string[];
+    successMetrics: string[];
+    hasDocumentedStrategy: string;
+    supportNeeded: string[];
+    otherSupport: string;
+    holdingBackReason: string;
+    otherHoldingBackReason: string;
+    helpfulServices: string[];
+    otherHelpfulService: string;
+    strategyChallenges: string[];
+    otherStrategyChallenge: string;
+    interestedInGuidance: string;
+    guidanceAreas: string[];
+    otherGuidanceArea: string;
+    hasSetGoals: string;
+    setGoalsDetails: string;
+    wantsHelpWithGoals: string;
+    socialMediaIdeas: string;
+    businessLocation: string;
+    socialMediaPlatforms: string[]; // Add the missing property
+    usesSocialMedia: string; // Add the missing property
+    otherSocialMediaPlatform: string; // Add the missing property
+    postingFrequency: string; // Add the missing property
+  }>({
     employeeSize: '',
-    businessLocation: '',
-    industry: ''
+    industry: '',
+    socialMediaTools: [],
+    successMetrics: [],
+    hasDocumentedStrategy: '',
+    supportNeeded: [],
+    otherSupport: '',
+    holdingBackReason: '',
+    otherHoldingBackReason: '',
+    helpfulServices: [],
+    otherHelpfulService: '',
+    strategyChallenges: [],
+    otherStrategyChallenge: '',
+    interestedInGuidance: '',
+    guidanceAreas: [],
+    otherGuidanceArea: '',
+    hasSetGoals: '',
+    setGoalsDetails: '',
+    wantsHelpWithGoals: '',
+    socialMediaIdeas: '',
+    businessLocation: '', // Initialize the missing property
+    socialMediaPlatforms: [], // Initialize the new property
+    usesSocialMedia: '', // Initialize the new property
+    otherSocialMediaPlatform: '', // Add the missing property
+    postingFrequency: '', // Initialize the new property
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleLocationChange = (address: string) => {
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof typeof formData) => {
+    const { value, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      businessLocation: address
+      [field]: checked
+        ? [...(prev[field] as string[]), value]
+        : (prev[field] as string[]).filter((item: string) => item !== value),
     }));
   };
 
+  const nextStep = () => {
+    setStep((prev) => {
+      console.log('Current Step:', prev);
+      console.log('usesSocialMedia:', formData.usesSocialMedia);
+      console.log('hasDocumentedStrategy:', formData.hasDocumentedStrategy);
+  
+      // If the user answers "No" to Step 4, skip to Step 8
+      if (prev === 4 && formData.usesSocialMedia === 'no') {
+        console.log('Skipping to Step 8');
+        return 8; // Skip Steps 5, 6, and 7
+      }
+  
+      // If the user answers "No" to Step 4 and is on Step 10, stop the form
+      if (prev === 10 && formData.usesSocialMedia === 'no') {
+        console.log('Ending at Step 10');
+        return prev; // Stay on Step 10
+      }
+  
+      // If the user answers "Yes" to Step 7, skip to Step 15
+      if (prev === 7 && formData.hasDocumentedStrategy === 'yes') {
+        console.log('Skipping to Step 15');
+        return 15; // Skip Steps 11, 12, 13, and 14
+      }
+  
+      // If the user answers "No" to Step 7, go to Step 11
+      if (prev === 7 && formData.hasDocumentedStrategy === 'no') {
+        console.log('Proceeding to Step 11');
+        return 11; // Go to Step 11
+      }
+  
+      // If the user is on Step 11, go to Step 12
+      if (prev === 11) {
+        console.log('Proceeding to Step 12');
+        return 12; // Proceed to Step 12
+      }
+  
+      // If the user is on Step 12, go to Step 13
+      if (prev === 12) {
+        console.log('Proceeding to Step 13');
+        return 13; // Proceed to Step 13
+      }
+  
+      // If the user is on Step 13, go to Step 14
+      if (prev === 13) {
+        console.log('Proceeding to Step 14');
+        return 14; // Proceed to Step 14
+      }
+  
+      // If the user is on Step 14, go to Step 15
+      if (prev === 14) {
+        console.log('Proceeding to Step 15');
+        return 15; // Proceed to Step 15
+      }
+  
+      // If the user is on Step 15, go to Step 16
+      if (prev === 15) {
+        console.log('Proceeding to Step 16');
+        return 16; // Proceed to Step 16
+      }
+  
+      // If the user is on Step 16, stop the form
+      if (prev === 16) {
+        console.log('Ending at Step 16');
+        return prev; // Stay on Step 16
+      }
+  
+      console.log('Proceeding to the next step');
+      return prev + 1; // Otherwise, go to the next step
+    });
+  };
+  const prevStep = () => {
+    setStep((prev) => {
+      // If the user is on Step 8 and answered "No" to Step 4, go back to Step 4
+      if (prev === 8 && formData.usesSocialMedia === 'no') {
+        return 4; // Go back to Step 4
+      }
+  
+      // If the user is on Step 11 and answered "No" to Step 7, go back to Step 7
+      if (prev === 11 && formData.hasDocumentedStrategy === 'no') {
+        return 7; // Go back to Step 7
+      }
+  
+      // If the user is on Step 15 and answered "Yes" to Step 7, go back to Step 7
+      if (prev === 15 && formData.hasDocumentedStrategy === 'yes') {
+        return 7; // Go back to Step 7
+      }
+  
+      // If the user is on Step 12, go back to Step 11
+      if (prev === 12) {
+        return 11; // Go back to Step 11
+      }
+  
+      // If the user is on Step 13, go back to Step 12
+      if (prev === 13) {
+        return 12; // Go back to Step 12
+      }
+  
+      // If the user is on Step 14, go back to Step 13
+      if (prev === 14) {
+        return 13; // Go back to Step 13
+      }
+  
+      // If the user is on Step 15, go back to Step 14
+      if (prev === 15) {
+        return 14; // Go back to Step 14
+      }
+  
+      // If the user is on Step 16, go back to Step 15
+      if (prev === 16) {
+        return 15; // Go back to Step 15
+      }
+  
+      return prev > 1 ? prev - 1 : prev; // Otherwise, go to the previous step
+    });
+  };
   const handleSubmit = async () => {
     try {
       const response = await fetch('/api/businessData', {
@@ -67,7 +296,7 @@ const BusinessData = () => {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
@@ -88,15 +317,13 @@ const BusinessData = () => {
     }
   };
 
-  const nextStep = () => setStep(prev => prev + 1);
-  const prevStep = () => setStep(prev => prev - 1);
-
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg border-2 border-[#501214] mt-16">
       <h1 className="text-3xl font-bold text-[#501214] mb-6 text-center">Business Information</h1>
 
       <div className="h-[300px] w-[500px] flex flex-col justify-between items-center mx-auto">
         <div className="w-full h-full flex flex-col justify-center items-center">
+          {/* Step 1: Employee Size */}
           {step === 1 && (
             <div className="w-full">
               <label className="block mb-2 font-medium text-[#501214]">Employee Size:</label>
@@ -118,63 +345,413 @@ const BusinessData = () => {
             </div>
           )}
 
-          {step === 2 && (
+          {/* Step 2: Industry */}
+{step === 2 && (
+  <div className="w-full">
+    <label className="block mb-2 font-medium text-[#501214]">What industry is the business?</label>
+    <select
+      name="industry"
+      value={formData.industry}
+      onChange={handleChange}
+      className="w-full p-2 border rounded-md border-[#AC9155] focus:border-[#EB2E47] focus:ring-[#EBBA45] bg-white"
+    >
+      <option value="" disabled>Select an industry</option>
+      {industryOptions.map(option => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  </div>
+)}
+          {/* Step 3: Business Location */}
+{step === 3 && (
+  <div className="w-full">
+    <label className="block mb-2 font-medium text-[#501214]">What is the location of the business?</label>
+    <AddressAutoComplete
+      value={formData.businessLocation}
+      onChange={(value: string) => setFormData(prev => ({ ...prev, businessLocation: value }))}
+    />
+  </div>
+)}
+
+{/* Step 4: Social Media Usage */}
+{step === 4 && (
+  <div className="w-full">
+    <label className="block mb-2 font-medium text-[#501214]">
+      Do you currently use any social media for your business? <br />
+      (This includes things like a Facebook page, Instagram profile, or any other place online where you post updates, photos, or connect with customers.)
+    </label>
+    <div className="flex gap-4 mb-4">
+      <label className="inline-flex items-center space-x-2 cursor-pointer">
+        <input
+          type="radio"
+          name="usesSocialMedia"
+          value="yes"
+          checked={formData.usesSocialMedia === 'yes'}
+          onChange={handleChange}
+          className="form-radio text-[#EB2E47] focus:ring-[#EBBA45]"
+        />
+        <span>Yes</span>
+      </label>
+      <label className="inline-flex items-center space-x-2 cursor-pointer">
+        <input
+          type="radio"
+          name="usesSocialMedia"
+          value="no"
+          checked={formData.usesSocialMedia === 'no'}
+          onChange={handleChange}
+          className="form-radio text-[#EB2E47] focus:ring-[#EBBA45]"
+        />
+        <span>No</span>
+      </label>
+    </div>
+  </div>
+)}
+
+{/* Step 5: Social Media Platforms */}
+{step === 5 && formData.usesSocialMedia === 'yes' && (
+  <div className="w-full">
+    <label className="block mb-2 font-medium text-[#501214]">
+      Which social media platforms are you using? <br />
+      (Please check all that apply — these are websites or apps where you might share photos, updates, or communicate with your audience.)
+    </label>
+    <div className="flex flex-wrap gap-4">
+      {[
+        'Facebook',
+        'Instagram',
+        'X (formerly Twitter)',
+        'TikTok',
+        'LinkedIn',
+        'Pinterest',
+        'YouTube',
+      ].map((platform) => (
+        <label key={platform} className="inline-flex items-center space-x-2 cursor-pointer">
+          <input
+            type="checkbox"
+            value={platform}
+            checked={formData.socialMediaPlatforms?.includes(platform)}
+            onChange={(e) => handleCheckboxChange(e, 'socialMediaPlatforms')}
+            className="form-checkbox text-[#EB2E47] focus:ring-[#EBBA45]"
+          />
+          <span>{platform}</span>
+        </label>
+      ))}
+    </div>
+
+    <div className="mt-4">
+      <label className="block mb-2 font-medium text-[#501214]">Other:</label>
+      <input
+        type="text"
+        name="otherSocialMediaPlatform"
+        value={formData.otherSocialMediaPlatform || ''}
+        onChange={handleChange}
+        className="w-full p-2 border rounded-md border-[#AC9155] focus:border-[#EB2E47] focus:ring-[#EBBA45] bg-white"
+        placeholder="Specify other platforms"
+      />
+    </div>
+  </div>
+)}
+
+{/* Step 6: Posting Frequency */}
+{step === 6 && (
+  <div className="w-full">
+    <label className="block mb-2 font-medium text-[#501214]">How frequently do you post on social media?</label>
+    <div className="flex flex-wrap gap-4">
+      {['Daily', '2–3 times a week', 'Weekly', 'Less than once a week'].map((option) => (
+        <label key={option} className="inline-flex items-center space-x-2 cursor-pointer">
+          <input
+            type="radio"
+            name="postingFrequency"
+            value={option}
+            checked={formData.postingFrequency === option}
+            onChange={handleChange}
+            className="form-radio text-[#EB2E47] focus:ring-[#EBBA45]"
+          />
+          <span>{option}</span>
+        </label>
+      ))}
+    </div>
+  </div>
+)}
+
+{/* Step 4: Documented Strategy */}
+{step === 7 && (
             <div className="w-full">
-              <label className="block mb-2 font-medium text-[#501214]">Business Location:</label>
-              <AddressAutoComplete
-                value={formData.businessLocation}
-                onChange={handleLocationChange}
+              <label className="block mb-2 font-medium text-[#501214]">Do you have a documented social media strategy?</label>
+              <div className="flex gap-4">
+                {documentedStrategyOptions.map(option => (
+                  <label key={option.value} className="inline-flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="hasDocumentedStrategy"
+                      value={option.value}
+                      checked={formData.hasDocumentedStrategy === option.value}
+                      onChange={handleChange}
+                      className="form-radio text-[#EB2E47] focus:ring-[#EBBA45]"
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
+{/* Step 5: Support Needed */}
+{step === 8 && (
+            <div className="w-full">
+<label className="block mb-2 font-medium text-[#501214]">What kind of support would you need to get started?</label>
+              <div className="flex flex-wrap gap-4">
+                {supportOptions.map(option => (
+                  <label key={option.value} className="inline-flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      value={option.value}
+                      checked={formData.supportNeeded.includes(option.value)}
+                      onChange={(e) => handleCheckboxChange(e, 'supportNeeded')}
+                      className="form-checkbox text-[#EB2E47] focus:ring-[#EBBA45]"
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
+              </div>
+
+              {formData.supportNeeded.includes('other') && (
+                <div className="mt-4">
+                  <label className="block mb-2 font-medium text-[#501214]">Please specify:</label>
+                  <input
+                    type="text"
+                    name="otherSupport"
+                    value={formData.otherSupport}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-md border-[#AC9155] focus:border-[#EB2E47] focus:ring-[#EBBA45] bg-white"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+{/* Step 6: Holding Back */}
+{step === 9 && (
+            <div className="w-full">
+              <label className="block mb-2 font-medium text-[#501214]">What’s holding you back from starting now?</label>
+<div className="flex flex-wrap gap-4">
+                {holdingBackOptions.map(option => (
+                  <label key={option.value} className="inline-flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="holdingBackReason"
+                      value={option.value}
+                      checked={formData.holdingBackReason === option.value}
+                      onChange={handleChange}
+                      className="form-radio text-[#EB2E47] focus:ring-[#EBBA45]"
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
+              </div>
+
+              {formData.holdingBackReason === 'other' && (
+                <div className="mt-4">
+                  <label className="block mb-2 font-medium text-[#501214]">Please specify:</label>
+                  <input
+                    type="text"
+                    name="otherHoldingBackReason"
+                    value={formData.otherHoldingBackReason}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-md border-[#AC9155] focus:border-[#EB2E47] focus:ring-[#EBBA45] bg-white"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Step 7: Helpful Services */}
+          {step === 10 && (
+            <div className="w-full">
+              <label className="block mb-2 font-medium text-[#501214]">What type of services would be most helpful to you?</label>
+              <div className="flex flex-wrap gap-4">
+                {helpfulServicesOptions.map(option => (
+                  <label key={option.value} className="inline-flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      value={option.value}
+                      checked={formData.helpfulServices.includes(option.value)}
+                      onChange={(e) => handleCheckboxChange(e, 'helpfulServices')}
+                      className="form-checkbox text-[#EB2E47] focus:ring-[#EBBA45]"
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
+              </div>
+
+              {formData.helpfulServices.includes('other') && (
+                <div className="mt-4">
+                  <label className="block mb-2 font-medium text-[#501214]">Please specify:</label>
+                  <input
+                    type="text"
+                    name="otherHelpfulService"
+                    value={formData.otherHelpfulService}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-md border-[#AC9155] focus:border-[#EB2E47] focus:ring-[#EBBA45] bg-white"
+                  />
+                  </div>
+              )}
+            </div>
+          )}
+
+          {/* Step 8: Strategy Challenges */}
+          {step === 11 && (
+            <div className="w-full">
+              <label className="block mb-2 font-medium text-[#501214]">What challenges have you faced in creating a social media strategy?</label>
+              <div className="flex flex-wrap gap-4">
+                {strategyChallengesOptions.map(option => (
+                  <label key={option.value} className="inline-flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      value={option.value}
+                      checked={formData.strategyChallenges.includes(option.value)}
+                      onChange={(e) => handleCheckboxChange(e, 'strategyChallenges')}
+                      className="form-checkbox text-[#EB2E47] focus:ring-[#EBBA45]"
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
+              </div>
+
+
+              {formData.strategyChallenges.includes('other') && (
+                <div className="mt-4">
+                  <label className="block mb-2 font-medium text-[#501214]">Please specify:</label>
+                  <input
+                    type="text"
+                    name="otherStrategyChallenge"
+                    value={formData.otherStrategyChallenge}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-md border-[#AC9155] focus:border-[#EB2E47] focus:ring-[#EBBA45] bg-white"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+
+          {/* Step 9: Interested in Guidance */}
+          {step === 12 && (
+            <div className="w-full">
+              <label className="block mb-2 font-medium text-[#501214]">Would you be interested in guidance for creating a social media strategy?</label>
+              {/* Add your interested in guidance options here */}
+            </div>
+          )}
+
+          {/* Step 10: Social Media Goals */}
+          {step === 13 && (
+            <div className="w-full">
+              <label className="block mb-2 font-medium text-[#501214]">Have you tried setting any social media goals for your business?</label>
+              {/* Add your social media goals options here */}
+            </div>
+          )}
+
+          {/* Step 11: Social Media Ideas */}
+          {step === 14 && (
+            <div className="w-full">
+              <label className="block mb-2 font-medium text-[#501214]">Do you have any ideas on what you’d like to achieve with your social media presence?</label>
+              <textarea
+                name="socialMediaIdeas"
+                value={formData.socialMediaIdeas}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md border-[#AC9155] focus:border-[#EB2E47] focus:ring-[#EBBA45] bg-white"
+                rows={4}
+                placeholder="Share your ideas here..."
               />
             </div>
           )}
-
-          {step === 3 && (
-            <div className="w-full">
-              <label className="block mb-2 font-medium text-[#501214]">Primary Industry:</label>
-              <select
-                name="industry"
-                value={formData.industry}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md border-[#AC9155] focus:border-[#EB2E47] focus:ring-[#EBBA45] bg-white"
-              >
-                <option value="">Select Industry</option>
-                {industryOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-6 flex justify-between w-full">
-          {step > 1 && (
-            <button
-              onClick={prevStep}
-              className="px-4 py-2 bg-[#363534] hover:bg-[#6A5638] text-white rounded-md transition duration-200"
-            >
-              Previous
-            </button>
-          )}
-          {step < 3 ? (
-            <button
-              onClick={nextStep}
-              className="px-4 py-2 bg-[#6A5638] hover:bg-[#419E69] text-white rounded-md transition duration-200"
-            >
-              Next
-            </button>
-          ) : (
-            <button
-              onClick={handleSubmit}
-              className="px-4 py-2 bg-[#6A5638] hover:bg-[#419E69] text-white rounded-md transition duration-200"
-            >
-              Submit
-            </button>
-          )}
-        </div>
-      </div>
+          {/* Step 15: Social Media Management Tools */}
+{step === 15 && (
+  <div className="w-full">
+    <label className="block mb-2 font-medium text-[#501214]">
+      Do you use any tools for social media management?
+    </label>
+    <div className="flex flex-wrap gap-4">
+      {[
+        'Scheduling tools like Buffer',
+        'Personal team or social media employee',
+        'Hootsuite',
+        'Analytics tools like Google Analytics',
+        'No tools',
+      ].map((option) => (
+        <label key={option} className="inline-flex items-center space-x-2 cursor-pointer">
+          <input
+            type="radio"
+            name="socialMediaTools"
+            value={option}
+            checked={formData.socialMediaTools.includes(option)}
+            onChange={(e) => handleCheckboxChange(e, 'socialMediaTools')}
+            className="form-radio text-[#EB2E47] focus:ring-[#EBBA45]"
+          />
+          <span>{option}</span>
+        </label>
+      ))}
     </div>
+  </div>
+)}
+{/* Step 16: Success Metrics */}
+{step === 16 && (
+  <div className="w-full">
+    <label className="block mb-2 font-medium text-[#501214]">
+      How do you measure the success of your social media efforts?
+    </label>
+    <div className="flex flex-wrap gap-4">
+      {[
+        'Engagement metrics',
+        'Sales/conversions',
+        'Follower growth',
+        'Don’t track',
+      ].map((option) => (
+        <label key={option} className="inline-flex items-center space-x-2 cursor-pointer">
+          <input
+            type="radio"
+            name="successMetrics"
+            value={option}
+            checked={formData.successMetrics.includes(option)}
+            onChange={(e) => handleCheckboxChange(e, 'successMetrics')}
+            className="form-radio text-[#EB2E47] focus:ring-[#EBBA45]"
+          />
+          <span>{option}</span>
+        </label>
+      ))}
+    </div>
+  </div>
+)}
+        </div>
+
+        {/* Navigation Buttons */}
+<div className="mt-6 flex justify-between w-full">
+  {step > 1 && (
+    <button
+      onClick={prevStep}
+      className="px-4 py-2 bg-[#363534] hover:bg-[#6A5638] text-white rounded-md transition duration-200"
+    >
+      Previous
+    </button>
+  )}
+  {step < 16 ? ( // Ensure this condition matches the last step
+    <button
+      onClick={nextStep}
+      className="px-4 py-2 bg-[#6A5638] hover:bg-[#419E69] text-white rounded-md transition duration-200"
+    >
+      Next
+    </button>
+  ) : (
+    <button
+      onClick={handleSubmit}
+      className="px-4 py-2 bg-[#6A5638] hover:bg-[#419E69] text-white rounded-md transition duration-200"
+    >
+      Submit
+    </button>
+  )}
+    </div>
+  </div>
+  </div>
   );
 };
 

@@ -36,7 +36,7 @@ const industryOptions = [
 ];
 
 
-const socialMediaToolsOptions = [
+/*const socialMediaToolsOptions = [
   { value: 'hootsuite', label: 'Hootsuite' },
   { value: 'buffer', label: 'Buffer' },
   { value: 'sproutsocial', label: 'Sprout Social' },
@@ -49,7 +49,7 @@ const successMetricsOptions = [
   { value: 'sales', label: 'Sales/conversions' },
   { value: 'growth', label: 'Follower growth' },
   { value: 'none', label: 'Don’t track' },
-];
+];*/
 
 const documentedStrategyOptions = [
   { value: 'yes', label: 'Yes' },
@@ -88,7 +88,7 @@ const strategyChallengesOptions = [
   { value: 'no-need', label: 'Don’t see the need' },
   { value: 'other', label: 'Other – please specify' },
 ];
-
+/*
 const strategyGuidanceAreasOptions = [
   { value: 'content', label: 'Content creation' },
   { value: 'audience', label: 'Target audience identification' },
@@ -96,7 +96,7 @@ const strategyGuidanceAreasOptions = [
   { value: 'goals', label: 'Goal setting' },
   { value: 'tracking', label: 'Performance tracking' },
   { value: 'other', label: 'Other – please specify' },
-];
+];*/
 
 const BusinessData = () => {
   const router = useRouter();

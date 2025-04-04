@@ -36,7 +36,7 @@ const IssuesPage = () => {
         })));
         setAlert({
           isOpen: true,
-          message: 'Successfully loaded business issues',
+          message: 'Successfully loaded business strategies',
           type: 'success'
         });
       } catch (err) {
@@ -76,10 +76,10 @@ const IssuesPage = () => {
 
       <div className="mx-auto max-w-6xl px-6 py-16">
         <h1 className="mb-8 text-center text-4xl font-extrabold text-gray-900">
-          Business Issues and Strategies
+          Growth Strategies
         </h1>
         <p className="mb-12 text-center text-lg text-gray-700">
-          Select an issue to explore strategies and get personalized guidance from our AI assistant.
+          Select the options to grow your business with personalized AI assistant.
         </p>
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">

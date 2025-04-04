@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import GrowthStrategy from '@/models/GrowthStrategies';
+import GrowthStrategy from '@/models/growthStrategies';
 import BusinessStage from '@/models/BusinessStage';
 import { connectToDB } from "@/utils/database";
 import jwt from 'jsonwebtoken';

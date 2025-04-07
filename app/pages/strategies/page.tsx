@@ -1,26 +1,31 @@
 'use client';
 
+
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Alert from '@/Components/Alert';
+
 
 interface Problem {
   id: string;
   title: string;
   description: string;
   icon: string;
-  colorClasses: string;
+  colorClasses: string; // This will now hold the color hex value
 }
+
 
 interface Strategy {
   _id: string;
   problem: Problem;
 }
 
+
 interface ApiResponse {
   stage: string;
   strategies: Strategy[];
 }
+
 
 const StrategiesPage = () => {
   const [strategies, setStrategies] = useState<Strategy[]>([]);
@@ -28,8 +33,9 @@ const StrategiesPage = () => {
   const [alert, setAlert] = useState({
     isOpen: false,
     message: '',
-    type: 'success' as 'success' | 'error' | 'warning'
+    type: 'success' as 'success' | 'error' | 'warning',
   });
+
 
   useEffect(() => {
     const fetchStrategies = async () => {
@@ -40,42 +46,27 @@ const StrategiesPage = () => {
           throw new Error(errorData.error || 'Failed to fetch strategies');
         }
         const data: ApiResponse = await response.json();
-        console.log('Received data:', data); // Add this debug log
-
-        if (!data.strategies || data.strategies.length === 0) {
-          setAlert({
-            isOpen: true,
-            message: 'No strategies found for your business stage',
-            type: 'warning'
-          });
-          setStrategies([]);
-        } else {
-          setStrategies(data.strategies);
-          setAlert({
-            isOpen: true,
-            // message: `Successfully loaded ${data.stage} level strategies (${data.strategies.length} items)`,
-            message: `Successfully loaded strategies`,
-            type: 'success'
-          });
-        }
+        setStrategies(data.strategies);
       } catch (err) {
-        console.error('Fetch error:', err); // Add this debug log
         setAlert({
           isOpen: true,
           message: err instanceof Error ? err.message : 'An unknown error occurred',
-          type: 'error'
+          type: 'error',
         });
       } finally {
         setLoading(false);
       }
     };
 
+
     fetchStrategies();
   }, []);
 
+
   const handleAlertClose = () => {
-    setAlert(prev => ({ ...prev, isOpen: false }));
+    setAlert((prev) => ({ ...prev, isOpen: false }));
   };
+
 
   if (loading) {
     return (
@@ -84,6 +75,7 @@ const StrategiesPage = () => {
       </div>
     );
   }
+
 
   return (
     <div className="min-h-screen pt-24 bg-[#F5F1EE] font-sans">
@@ -94,6 +86,7 @@ const StrategiesPage = () => {
         onClose={handleAlertClose}
       />
 
+
       <div className="mx-auto max-w-6xl px-6 py-8">
         <h1 className="mb-8 text-center text-4xl font-extrabold text-gray-900">
           Growth Strategies
@@ -102,27 +95,44 @@ const StrategiesPage = () => {
           Select the options to grow your business with personalized AI assistant.
         </p>
 
+
         {strategies.length === 0 ? (
           <div className="text-center p-8 bg-white rounded-lg shadow">
             <p className="text-gray-600">No strategies available for your business stage.</p>
           </div>
         ) : (
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {strategies.map((strategy) => (
+          {strategies.map((strategy, index) => (
   <Link
-    href={`/pages/resourcesPage?problemId=${strategy.problem.id}&title=${encodeURIComponent(strategy.problem.title)}`}
+    href={`/pages/resourcesPage?problemId=${strategy.problem.id}&title=${encodeURIComponent(
+      strategy.problem.title
+    )}`}
     key={strategy._id}
     className="group block hover:no-underline"
   >
     <div className="p-6 bg-white shadow-lg rounded-lg hover:shadow-xl transition-all duration-300">
+      {/* Icon Container */}
       <div
-        className={`mb-4 inline-flex items-center justify-center rounded-full p-4 ${
-          strategy.problem.colorClasses || 'bg-blue-100 text-blue-600'
-        }`}
+        className="mb-4 inline-flex items-center justify-center rounded-full p-4"
+        style={{
+          backgroundColor: index === 0
+            ? '#266725' // Dark green for the first icon
+            : index === 1
+            ? '#007096' // Dark blue for the second icon
+            : index === 2
+            ? '#EB2E47' // Red for the third icon
+            : index === 3
+            ? '#EBBA45' // Yellow for the fourth icon
+            : '#BFF3FD', // Light blue for others
+        }}
       >
+        {/* Icon */}
         {strategy.problem.icon && (
           <div
-            className="text-white w-6 h-6"
+            className="w-6 h-6"
+            style={{
+              color: '#FFFFFF', // White icon color for contrast
+            }}
             dangerouslySetInnerHTML={{ __html: strategy.problem.icon }}
           />
         )}
@@ -159,5 +169,6 @@ const StrategiesPage = () => {
     </div>
   );
 };
+
 
 export default StrategiesPage;

@@ -53,7 +53,8 @@ const StrategiesPage = () => {
           setStrategies(data.strategies);
           setAlert({
             isOpen: true,
-            message: `Successfully loaded ${data.stage} level strategies (${data.strategies.length} items)`,
+            // message: `Successfully loaded ${data.stage} level strategies (${data.strategies.length} items)`,
+            message: `Successfully loaded strategies`,
             type: 'success'
           });
         }

@@ -176,70 +176,25 @@ const BusinessData = () => {
   const nextStep = () => {
     setStep((prev) => {
       console.log('Current Step:', prev);
-      console.log('usesSocialMedia:', formData.usesSocialMedia);
-      console.log('hasDocumentedStrategy:', formData.hasDocumentedStrategy);
   
       // If the user answers "No" to Step 4, skip to Step 8
       if (prev === 4 && formData.usesSocialMedia === 'no') {
         console.log('Skipping to Step 8');
-        return 8; // Skip Steps 5, 6, and 7
-      }
-  
-      // If the user answers "No" to Step 4 and is on Step 10, stop the form
-      if (prev === 10 && formData.usesSocialMedia === 'no') {
-        console.log('Ending at Step 10');
-        return prev; // Stay on Step 10
+        return 8;
       }
   
       // If the user answers "Yes" to Step 7, skip to Step 15
       if (prev === 7 && formData.hasDocumentedStrategy === 'yes') {
         console.log('Skipping to Step 15');
-        return 15; // Skip Steps 11, 12, 13, and 14
+        return 15;
       }
   
-      // If the user answers "No" to Step 7, go to Step 11
-      if (prev === 7 && formData.hasDocumentedStrategy === 'no') {
-        console.log('Proceeding to Step 11');
-        return 11; // Go to Step 11
+      // If the user is on the last step they can answer, stop advancing
+      if (prev === 16 || (prev === 10 && formData.usesSocialMedia === 'no')) {
+        console.log('No more questions left');
+        return prev; // Stay on the current step
       }
   
-      // If the user is on Step 11, go to Step 12
-      if (prev === 11) {
-        console.log('Proceeding to Step 12');
-        return 12; // Proceed to Step 12
-      }
-  
-      // If the user is on Step 12, go to Step 13
-      if (prev === 12) {
-        console.log('Proceeding to Step 13');
-        return 13; // Proceed to Step 13
-      }
-  
-      // If the user is on Step 13, go to Step 14
-      if (prev === 13) {
-        console.log('Proceeding to Step 14');
-        return 14; // Proceed to Step 14
-      }
-  
-      // If the user is on Step 14, go to Step 15
-      if (prev === 14) {
-        console.log('Proceeding to Step 15');
-        return 15; // Proceed to Step 15
-      }
-  
-      // If the user is on Step 15, go to Step 16
-      if (prev === 15) {
-        console.log('Proceeding to Step 16');
-        return 16; // Proceed to Step 16
-      }
-  
-      // If the user is on Step 16, stop the form
-      if (prev === 16) {
-        console.log('Ending at Step 16');
-        return prev; // Stay on Step 16
-      }
-  
-      console.log('Proceeding to the next step');
       return prev + 1; // Otherwise, go to the next step
     });
   };
@@ -247,42 +202,12 @@ const BusinessData = () => {
     setStep((prev) => {
       // If the user is on Step 8 and answered "No" to Step 4, go back to Step 4
       if (prev === 8 && formData.usesSocialMedia === 'no') {
-        return 4; // Go back to Step 4
-      }
-  
-      // If the user is on Step 11 and answered "No" to Step 7, go back to Step 7
-      if (prev === 11 && formData.hasDocumentedStrategy === 'no') {
-        return 7; // Go back to Step 7
+        return 4;
       }
   
       // If the user is on Step 15 and answered "Yes" to Step 7, go back to Step 7
       if (prev === 15 && formData.hasDocumentedStrategy === 'yes') {
-        return 7; // Go back to Step 7
-      }
-  
-      // If the user is on Step 12, go back to Step 11
-      if (prev === 12) {
-        return 11; // Go back to Step 11
-      }
-  
-      // If the user is on Step 13, go back to Step 12
-      if (prev === 13) {
-        return 12; // Go back to Step 12
-      }
-  
-      // If the user is on Step 14, go back to Step 13
-      if (prev === 14) {
-        return 13; // Go back to Step 13
-      }
-  
-      // If the user is on Step 15, go back to Step 14
-      if (prev === 15) {
-        return 14; // Go back to Step 14
-      }
-  
-      // If the user is on Step 16, go back to Step 15
-      if (prev === 16) {
-        return 15; // Go back to Step 15
+        return 7;
       }
   
       return prev > 1 ? prev - 1 : prev; // Otherwise, go to the previous step
@@ -863,22 +788,22 @@ const BusinessData = () => {
       Previous
     </button>
   )}
-  {step < 16 ? ( // Ensure this condition matches the last step
-    <button
-      onClick={nextStep}
-      className="px-4 py-2 bg-[#6A5638] hover:bg-[#419E69] text-white rounded-md transition duration-200"
-    >
-      Next
-    </button>
-  ) : (
+  {step === 16 || (step === 10 && formData.usesSocialMedia === 'no') ? (
     <button
       onClick={handleSubmit}
       className="px-4 py-2 bg-[#6A5638] hover:bg-[#419E69] text-white rounded-md transition duration-200"
     >
       Submit
     </button>
+  ) : (
+    <button
+      onClick={nextStep}
+      className="px-4 py-2 bg-[#6A5638] hover:bg-[#419E69] text-white rounded-md transition duration-200"
+    >
+      Next
+    </button>
   )}
-    </div>
+</div>
   </div>
   </div>
   );

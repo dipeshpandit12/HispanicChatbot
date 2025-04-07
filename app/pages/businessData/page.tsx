@@ -290,6 +290,7 @@ const BusinessData = () => {
   };
   const handleSubmit = async () => {
     try {
+      // First save business data
       const response = await fetch('/api/businessData', {
         method: 'POST',
         headers: {
@@ -298,7 +299,7 @@ const BusinessData = () => {
         credentials: 'include',
         body: JSON.stringify(formData),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         if (response.status === 401) {
@@ -307,10 +308,14 @@ const BusinessData = () => {
         }
         throw new Error(errorData.error || 'Failed to save business data');
       }
-
+  
       const data = await response.json();
       console.log('Business data saved:', data);
+      
+      // Show success message and redirect
       alert('Business information saved successfully!');
+      router.push('/pages/stage'); // Redirect to the stage page');
+  
     } catch (error) {
       console.error('Error saving business data:', error);
       alert(error instanceof Error ? error.message : 'Error saving business information. Please try again.');

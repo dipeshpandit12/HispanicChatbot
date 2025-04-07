@@ -19,42 +19,51 @@ const StagePage = () => {
     const fetchStage = async () => {
         try {
             const response = await fetch('/api/stage');
-            if (response.status === 404) {
-                setError('Business stage not found');
-                setShowAlert(true);
-                return null;
-            }
             if (!response.ok) {
                 const error = await response.json();
+                if (response.status === 404) {
+                    setError('Business stage not found');
+                    setShowAlert(true);
+                    setTimeout(() => {
+                        router.push('/pages/businessData');
+                    }, 3000);
+                    return null;
+                }
                 setError(error.error || 'Failed to fetch business stage');
                 setShowAlert(true);
+                setTimeout(() => {
+                    router.push('/pages/businessData');
+                }, 3000);
                 return null;
             }
             const data = await response.json();
             return data.stage;
         } catch (error) {
             console.error('Failed to fetch stage:', error);
-            throw error;
+            setError('An error occurred while fetching business stage');
+            setShowAlert(true);
+            setTimeout(() => {
+                router.push('/pages/businessData');
+            }, 3000);
+            return null;
         }
     };
-
 
     useEffect(() => {
         const getStage = async () => {
             try {
                 const result = await fetchStage();
-                setStage(result);
-                setError(null);
+                if (result) {
+                    setStage(result);
+                    setError(null);
+                }
             } catch (err: unknown) {
                 const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
                 setError(errorMessage);
                 setShowAlert(true);
-
-                if (errorMessage === 'Business stage not found') {
-                    setTimeout(() => {
-                        router.push('/pages/businessData');
-                    }, 3000);
-                }
+                setTimeout(() => {
+                    router.push('/pages/businessData');
+                }, 3000);
             } finally {
                 setLoading(false);
             }

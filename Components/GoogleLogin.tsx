@@ -20,7 +20,7 @@ export default function GoogleLoginButton() {
             const data = await response.json();
 
             if (response.ok) {
-                router.push('/pages/businessData'); // Redirect after successful login
+                router.push('/pages/stage'); // Redirect after successful login
             } else {
                 console.error('Login failed:', data.error);
             }

@@ -9,19 +9,12 @@ export function middleware(request: NextRequest) {
   const isPublicPath = publicPaths.includes(path);
 
   const token = request.cookies.get('authToken')?.value;
-  const hasBusinessData = request.cookies.get('hasBusinessData')?.value;
-
-  const businessDataRequiredPaths = ['/chatInterface', '/socialMediaDiagnostic'];
 
   // 1. If user is authenticated
   if (token) {
-    // Only redirect from auth pages if user is already logged in
-    if (path === '/auth/login' || path === '/auth/signup') {
-      return NextResponse.redirect(new URL('/pages/businessData', request.url));
-    }
-    // Check for business data requirement
-    if (businessDataRequiredPaths.includes(path) && !hasBusinessData) {
-      return NextResponse.redirect(new URL('/pages/businessData', request.url));
+    // Redirect from auth pages and root to stage page if logged in
+    if (path === '/auth/login' || path === '/auth/signup' || path === '/') {
+      return NextResponse.redirect(new URL('/pages/stage', request.url));
     }
   }
 

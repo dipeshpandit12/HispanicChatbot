@@ -1,21 +1,21 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@400;700&family=IBM+Plex+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Halis+Grotesque:wght@400;500;600;700&family=Nunito+Sans:wght@400;600;700&family=Roboto+Mono:wght@400;700&display=swap');
 
-@theme {
-  --font-sans: 'Poppins', sans-serif;
-  --font-serif: 'Playfair Display', serif;
-  --font-mono: 'IBM Plex Mono', monospace;
-}
 
 :root {
+  /* Font Variables */
+  --font-primary: 'Halis Grotesque', sans-serif;
+  --font-secondary: 'Nunito Sans', sans-serif;
+  --font-tertiary: 'Roboto Mono', monospace;
+ 
   /* Main Colors */
   --primary-dark: #501214;
   --primary-light: #AC9155;
-  
+ 
   /* Secondary Colors */
   --secondary-red: #EB2E47;
   --secondary-yellow: #EBBA45;
-  
+ 
   /* Tertiary Colors */
   --tertiary-pink: #F9DCDE;
   --tertiary-coral: #EA664D;
@@ -24,12 +24,12 @@
   --tertiary-teal: #6EA095;
   --tertiary-light-blue: #BFF3FD;
   --tertiary-dark-blue: #007096;
-  
+ 
   /* Web-Exclusive Colors */
   --web-dark-gray: #363534;
   --web-light-beige: #F5F1EE;
   --web-brown: #6A5638;
-  
+ 
   /* Base Theme */
   --background: var(--web-light-beige);
   --foreground: var(--primary-dark);
@@ -44,6 +44,7 @@
   --focus: var(--tertiary-teal);
 }
 
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: var(--web-dark-gray);
@@ -57,34 +58,41 @@
   }
 }
 
+
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-sans);
 }
 
+
 h1, h2, h3 {
   font-family: var(--font-serif);
   color: var(--primary-dark);
 }
 
+
 code, pre {
   font-family: var(--font-mono);
 }
+
 
 a {
   color: var(--link);
   transition: color 0.2s ease-in-out;
 }
 
+
 a:hover {
   color: var(--accent);
 }
+
 
 button, .button {
   font-family: var(--font-sans);
   font-weight: 600;
 }
+
 
 /* Utility classes for your color palette */
 .bg-primary-dark { background-color: var(--primary-dark); }
@@ -102,6 +110,7 @@ button, .button {
 .bg-web-light-beige { background-color: var(--web-light-beige); }
 .bg-web-brown { background-color: var(--web-brown); }
 
+
 .text-primary-dark { color: var(--primary-dark); }
 .text-primary-light { color: var(--primary-light); }
 .text-secondary-red { color: var(--secondary-red); }
@@ -117,21 +126,25 @@ button, .button {
 .text-web-light-beige { color: var(--web-light-beige); }
 .text-web-brown { color: var(--web-brown); }
 
+
 .border-primary-dark { border-color: var(--primary-dark); }
 .border-primary-light { border-color: var(--primary-light); }
 .border-web-dark-gray { border-color: var(--web-dark-gray); }
 .border-web-light-beige { border-color: var(--web-light-beige); }
 .border-web-brown { border-color: var(--web-brown); }
 
+
 /* Navbar-specific styles */
 nav, nav * {
   color: white !important;
 }
 
+
 nav a {
   color: white !important;
   text-decoration: none;
 }
+
 
 nav a:hover {
   text-decoration: underline;

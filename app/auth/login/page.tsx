@@ -26,12 +26,12 @@ const Login = () => {
                 credentials: 'include',
                 body: JSON.stringify({ email, password }),
             })
-
+    
             const data = await response.json();
-
+    
             if (response.ok) {
                 console.log('Login successful');
-                router.push('/pages/businessData');
+                router.push('/pages/stage');
             } else {
                 console.error('Login failed:', data.error);
                 setAlertState({

@@ -17,11 +17,15 @@ const StagePage = () => {
         try {
             const response = await fetch('/api/stage');
             if (response.status === 404) {
-                throw new Error('Business stage not found');
+                setError('Business stage not found');
+                setShowAlert(true);
+                return null;
             }
             if (!response.ok) {
                 const error = await response.json();
-                throw new Error(error.error || 'Failed to fetch business stage');
+                setError(error.error || 'Failed to fetch business stage');
+                setShowAlert(true);
+                return null;
             }
             const data = await response.json();
             return data.stage;
@@ -41,7 +45,6 @@ const StagePage = () => {
                 const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
                 setError(errorMessage);
                 setShowAlert(true);
-                
                 if (errorMessage === 'Business stage not found') {
                     setTimeout(() => {
                         router.push('/pages/businessData');
@@ -64,23 +67,14 @@ const StagePage = () => {
 
     if (error) {
         return (
-            <>
-                <Alert
-                    isOpen={showAlert}
-                    message={error === 'Business stage not found' 
-                        ? "Your business stage information was not found. Redirecting to business data collection page..." 
-                        : error}
-                    type={error === 'Business stage not found' ? 'warning' : 'error'}
-                    onClose={() => setShowAlert(false)}
-                />
-                {error !== 'Business stage not found' && (
-                    <div className="min-h-screen flex items-center justify-center">
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                            <p>Error: {error}</p>
-                        </div>
-                    </div>
-                )}
-            </>
+            <Alert
+                isOpen={showAlert}
+                message={error === 'Business stage not found' 
+                    ? "Your business stage information was not found. Redirecting to business data collection page..." 
+                    : error}
+                type={error === 'Business stage not found' ? 'warning' : 'error'}
+                onClose={() => setShowAlert(false)}
+            />
         );
     }
 

@@ -20,6 +20,7 @@ const BusinessStageSchema = new mongoose.Schema({
     }
 });
 
+
 const BusinessStage = mongoose.models.BusinessStage || mongoose.model('BusinessStage', BusinessStageSchema);
 
 export default BusinessStage;

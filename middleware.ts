@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Update public paths to include home page
-  const publicPaths = ['/', '/pages/home', '/auth/login', '/auth/signup','/pages/chatInterface'];
+  const publicPaths = ['/', '/pages/home', '/auth/login', '/auth/signup'];
   const isPublicPath = publicPaths.includes(path);
 
   const token = request.cookies.get('authToken')?.value;

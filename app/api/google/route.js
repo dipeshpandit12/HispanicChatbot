@@ -8,7 +8,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export async function POST(request) {
   try {
-    const { credential } = await request.json();
+    const { credential,redirect } = await request.json();
 
     const ticket = await client.verifyIdToken({
       idToken: credential,
@@ -47,7 +47,8 @@ export async function POST(request) {
       user: {
         email: googleUser.email,
         hasBusinessData: googleUser.hasBusinessData
-      }
+      },
+      redirect: redirect || '/pages/stage'
     });
 
     response.cookies.set('authToken', token, {

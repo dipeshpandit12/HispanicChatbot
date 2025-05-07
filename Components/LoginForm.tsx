@@ -59,9 +59,6 @@ export default function LoginForm() {
                 type={alertState.type}
                 onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
             />
-
-            <div className="bg-white p-8 rounded-lg shadow-lg w-96 border-2 border-[#501214]">
-                <h1 className="text-3xl font-bold text-[#501214] mb-6 text-center">Login</h1>
                 <form className="space-y-4" onSubmit={handleSubmit}>
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-[#501214]">
@@ -111,7 +108,6 @@ export default function LoginForm() {
                         Sign up
                     </Link>
                 </div>
-            </div>
         </>
     )
 }

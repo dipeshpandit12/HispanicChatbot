@@ -21,7 +21,8 @@ export function middleware(request: NextRequest) {
   // 2. If user is not authenticated
   if (!token && !isPublicPath) {
     const loginUrl = new URL('/auth/login', request.url);
-    loginUrl.searchParams.set('redirect', path);
+    const fullPath = path + (request.nextUrl.search || '');
+    loginUrl.searchParams.set('redirect', fullPath);
     return NextResponse.redirect(loginUrl);
   }
 

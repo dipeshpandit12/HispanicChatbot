@@ -108,6 +108,8 @@ const StrategiesPage = () => {
   <Link
     href={strategy.problem.title === 'Create Content' 
       ? 'https://canvas.txstate.edu/courses/2462560/pages/create-content'
+      : strategy.problem.title === 'Get Website'
+      ? 'https://canvas.txstate.edu/courses/2462560/pages/create-website'
       : 'https://canvas.txstate.edu/courses/2462560/pages/understanding-social-media-marketing'
     }
     key={strategy._id}

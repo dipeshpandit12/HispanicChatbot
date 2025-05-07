@@ -6,7 +6,7 @@ import { generateToken } from '@/utils/auth';
 
 export async function POST(request) {
   try {
-    const { email, password: inputPassword } = await request.json();
+    const { email, password: inputPassword,redirect } = await request.json();
 
     await connectToDB();
     const user = await User.findOne({ email });
@@ -25,7 +25,8 @@ export async function POST(request) {
       user: {
         email: user.email,
         hasBusinessData: user.hasBusinessData
-      }
+      },
+      redirect: redirect || '/pages/stage'
     });
 
     // Set HTTP-only cookie

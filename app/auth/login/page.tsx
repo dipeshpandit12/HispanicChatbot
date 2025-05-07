@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter,useSearchParams } from 'next/navigation'
 import { FormEvent, useState } from 'react'
 import GoogleLoginButton from '@/Components/GoogleLogin'
 import Alert from '@/Components/Alert'
@@ -13,7 +13,9 @@ const Login = () => {
         isOpen: false,
         message: '',
         type: 'error' as 'success' | 'error' | 'warning'
-    })
+    });
+    const searchParams = useSearchParams();
+    const redirectPath = searchParams.get('redirect');
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
@@ -24,14 +26,14 @@ const Login = () => {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email, password,redirect: redirectPath }),
             })
     
             const data = await response.json();
     
             if (response.ok) {
                 console.log('Login successful');
-                router.push('/pages/stage');
+                router.push(data.redirect || '/pages/stage');
             } else {
                 console.error('Login failed:', data.error);
                 setAlertState({

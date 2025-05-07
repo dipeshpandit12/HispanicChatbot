@@ -11,7 +11,8 @@ interface Problem {
   title: string;
   description: string;
   icon: string;
-  colorClasses: string; // This will now hold the color hex value
+  colorClasses: string;
+  courseurl: string;
 }
 
 
@@ -104,11 +105,14 @@ const StrategiesPage = () => {
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {strategies.map((strategy, index) => (
   <Link
-    href={`/pages/resourcesPage?problemId=${strategy.problem.id}&title=${encodeURIComponent(
-      strategy.problem.title
-    )}`}
+    href={strategy.problem.title === 'Create Content' 
+      ? 'https://canvas.txstate.edu/courses/2462560/pages/create-content'
+      : 'https://canvas.txstate.edu/courses/2462560/pages/understanding-social-media-marketing'
+    }
     key={strategy._id}
     className="group block hover:no-underline"
+    target="_blank"
+    rel="noopener noreferrer"
   >
     <div className="p-6 bg-white shadow-lg rounded-lg hover:shadow-xl transition-all duration-300">
       {/* Icon Container */}

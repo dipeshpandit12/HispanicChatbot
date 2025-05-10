@@ -326,7 +326,7 @@ const ChatInterfaceContent = () => {
                       onKeyDown={handleKeyPress}
                       placeholder="Type your question here..."
                       rows={1}
-                      className="flex-1 p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#007096] focus:border-transparent resize-none"
+                      className="flex-1 p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#007096] focus:border-transparent resize-none text-black"
                       disabled={sendingMessage}
                     />
                     <button 
@@ -402,15 +402,15 @@ const ChatInterfaceContent = () => {
         
         {/* Footer navigation with improved styling */}
         <div className="mt-12 flex justify-center">
-          <Link
+            <Link
             href="/pages/strategies"
-            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#5037cc] to-[#5b3cd6] text-white rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1"
-          >
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#007096] to-[#0091c2] text-white rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1"
+            >
             <span>View All Strategies</span>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-          </Link>
+            </Link>
         </div>
       </div>
     </div>

@@ -326,7 +326,7 @@ const ChatInterfaceContent = () => {
                       onKeyDown={handleKeyPress}
                       placeholder="Type your question here..."
                       rows={1}
-                      className="flex-1 p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#007096] focus:border-transparent resize-none"
+                      className="flex-1 p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#007096] focus:border-transparent resize-none text-black"
                       disabled={sendingMessage}
                     />
                     <button 

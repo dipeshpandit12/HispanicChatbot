@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -35,23 +35,40 @@ interface ChatData {
   };
 }
 
+interface Message {
+  type: 'user' | 'ai';
+  content: string;
+}
+
 const ChatInterfaceContent = () => {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
+  const [sendingMessage, setSendingMessage] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [chatData, setChatData] = useState<ChatData | null>(null);
   const [inputMessage, setInputMessage] = useState('');
-  const [messages, setMessages] = useState<Array<{type: 'user' | 'ai', content: string}>>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Extract URL parameters
   const source = searchParams.get('source');
   const courseId = searchParams.get('courseId');
   const problemId = searchParams.get('problemId');
 
+  // Scroll to bottom of messages
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   useEffect(() => {
     const fetchChatData = async () => {
       try {
         setLoading(true);
+        setError(null);
         
         // Build API URL with query parameters
         let apiUrl = `/api/chatInterface?source=${source || ''}&courseId=${courseId || ''}`;
@@ -59,14 +76,23 @@ const ChatInterfaceContent = () => {
           apiUrl += `&problemId=${problemId}`;
         }
         
+        console.log("Fetching data from:", apiUrl);
         const response = await fetch(apiUrl);
         
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to fetch chat data');
+          // Try to get error message from response
+          let errorMessage = "Failed to fetch chat data";
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch (e) {
+            console.error("Error parsing error response:", e);
+          }
+          throw new Error(errorMessage);
         }
         
         const data = await response.json();
+        console.log("Received chat data:", data);
         setChatData(data);
         
         // Initialize with a welcome message
@@ -76,8 +102,6 @@ const ChatInterfaceContent = () => {
             content: `Hello! I'm your AI assistant to help with your ${data.problem.title} needs. What specific questions do you have about ${data.solution?.title || 'this topic'}?`
           }]);
         }
-        
-        setError(null);
       } catch (err) {
         console.error('Error fetching chat data:', err);
         setError(err instanceof Error ? err.message : 'An unknown error occurred');
@@ -89,22 +113,84 @@ const ChatInterfaceContent = () => {
     fetchChatData();
   }, [source, courseId, problemId]);
 
-  const handleSendMessage = () => {
-    if (!inputMessage.trim()) return;
-    
-    // Add user message
-    setMessages(prev => [...prev, {type: 'user', content: inputMessage}]);
-    
-    // In a real implementation, you would send this to your API and get a response
-    // For now, we'll simulate a response after a short delay
-    setTimeout(() => {
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim() || !problemId || sendingMessage) return;
+  
+    try {
+      setSendingMessage(true);
+      
+      // Add user message
+      const newMessage = { type: 'user' as const, content: inputMessage };
+      setMessages(prev => [...prev, newMessage]);
+      const messageToBeSent = inputMessage;
+      setInputMessage('');
+      
+      console.log("Sending message to API:", {
+        message: messageToBeSent,
+        problemId,
+        historyLength: messages.length
+      });
+      
+      const response = await fetch('/api/chatInterface', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: messageToBeSent,
+          problemId: problemId,
+          chatHistory: messages.slice(-5), // Only send last 5 messages to prevent token limits
+        }),
+      });
+  
+      // Handle common HTTP errors
+      if (!response.ok) {
+        const statusText = response.statusText || `Error ${response.status}`;
+        let errorDetails = statusText;
+        
+        try {
+          const errorData = await response.json();
+          errorDetails = errorData.error || errorData.message || statusText;
+        } catch (e) {
+          console.error("Failed to parse error response:", e);
+        }
+        
+        throw new Error(`Server error: ${errorDetails}`);
+      }
+      
+      // Parse JSON response
+      const data = await response.json();
+      
+      // Handle API-level errors
+      if (!data.success && data.error) {
+        throw new Error(data.error);
+      }
+      
+      // Add AI response
       setMessages(prev => [...prev, {
         type: 'ai',
-        content: `Thank you for your question about ${chatData?.problem?.title}. This is a simulated response. In a complete implementation, this would be a response from your AI service.`
+        content: data.response || "Sorry, I received an empty response. Please try again."
       }]);
-    }, 1000);
-    
-    setInputMessage('');
+      
+    } catch (err) {
+      console.error('Error sending message:', err);
+      
+      // Add error as AI message
+      setMessages(prev => [...prev, {
+        type: 'ai',
+        content: `I'm sorry, I encountered an error: ${err instanceof Error ? err.message : 'Unknown error'}. Please try again later.`
+      }]);
+      
+    } finally {
+      setSendingMessage(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
   if (loading) {
@@ -164,7 +250,7 @@ const ChatInterfaceContent = () => {
               <div className="flex items-center mb-6">
                 {/* Icon from problem with improved styling */}
                 <div 
-                  className="inline-flex items-center justify-center rounded-xl p-3 mr-4 shadow-sm"
+                  className={`inline-flex items-center justify-center rounded-xl p-3 mr-4 shadow-sm`}
                   style={{ backgroundColor: chatData.problem.colorClasses.includes('yellow') 
                     ? '#EBBA45' : chatData.problem.colorClasses.includes('blue') 
                     ? '#007096' : chatData.problem.colorClasses.includes('green') 
@@ -208,7 +294,7 @@ const ChatInterfaceContent = () => {
                   </h3>
                 </div>
                 
-                <div className="chat-messages space-y-4 p-4 bg-white max-h-80 overflow-y-auto">
+                <div className="chat-messages space-y-4 p-4 bg-white max-h-96 overflow-y-auto">
                   {messages.map((message, index) => (
                     <div 
                       key={index} 
@@ -218,24 +304,39 @@ const ChatInterfaceContent = () => {
                           : 'bg-gray-100 text-gray-800 mr-12'
                       }`}
                     >
-                      <p>{message.content}</p>
+                      <p className="whitespace-pre-line">{message.content}</p>
                     </div>
                   ))}
+                  {sendingMessage && (
+                    <div className="bg-gray-100 text-gray-800 mr-12 p-4 rounded-xl flex items-center">
+                      <div className="w-3 h-3 bg-gray-400 rounded-full mr-1 animate-bounce"></div>
+                      <div className="w-3 h-3 bg-gray-400 rounded-full mr-1 animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                      <div className="w-3 h-3 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></div>
+                    </div>
+                  )}
+                  {/* Invisible div for auto-scrolling */}
+                  <div ref={messagesEndRef} />
                 </div>
                 
                 <div className="p-4 bg-gray-50 border-t border-gray-200">
                   <div className="flex">
-                    <input 
-                      type="text"
+                    <textarea 
                       value={inputMessage}
                       onChange={(e) => setInputMessage(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                      onKeyDown={handleKeyPress}
                       placeholder="Type your question here..."
-                      className="flex-1 p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#007096] focus:border-transparent"
+                      rows={1}
+                      className="flex-1 p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#007096] focus:border-transparent resize-none"
+                      disabled={sendingMessage}
                     />
                     <button 
                       onClick={handleSendMessage}
-                      className="bg-[#007096] text-white px-6 py-3 rounded-r-lg hover:bg-[#005f73] transition-colors flex items-center"
+                      disabled={sendingMessage || !inputMessage.trim()}
+                      className={`text-white px-6 py-3 rounded-r-lg flex items-center ${
+                        sendingMessage || !inputMessage.trim() 
+                          ? 'bg-gray-400' 
+                          : 'bg-[#007096] hover:bg-[#005f73] transition-colors'
+                      }`}
                     >
                       <span>Send</span>
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -301,7 +402,7 @@ const ChatInterfaceContent = () => {
         
         {/* Footer navigation with improved styling */}
         <div className="mt-12 flex justify-center">
-          <Link 
+          <Link
             href="/pages/strategies"
             className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#5037cc] to-[#5b3cd6] text-white rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1"
           >

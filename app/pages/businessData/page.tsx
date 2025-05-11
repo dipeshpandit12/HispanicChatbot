@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import AddressAutoComplete from "@/Components/AddressAutoComplete";
+import Alert from "@/Components/Alert";
 
 const employeeSizeOptions = [
   { value: '0-10', label: '0-10 employees' },
@@ -233,17 +234,33 @@ const BusinessData = () => {
         }
         throw new Error(errorData.error || 'Failed to save business data');
       }
+
+      const updateResponse = await fetch('/api/changeHasBusiness', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
+
+    if (!updateResponse.ok) {
+      console.error('Failed to update business data status');
+    }
   
       const data = await response.json();
       console.log('Business data saved:', data);
       
       // Show success message and redirect
-      alert('Business information saved successfully!');
+      <Alert isOpen={true} message="Business information saved successfully!" type="success" />;
       router.push('/pages/stage'); // Redirect to the stage page');
   
     } catch (error) {
       console.error('Error saving business data:', error);
-      alert(error instanceof Error ? error.message : 'Error saving business information. Please try again.');
+      <Alert 
+        isOpen={true} 
+        message={error instanceof Error ? error.message : 'Error saving business information. Please try again.'}
+        type="error"
+      />
     }
   };
 

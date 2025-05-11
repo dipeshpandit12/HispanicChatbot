@@ -2,12 +2,14 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname,useRouter } from 'next/navigation';
 import Logout from './Logout';
 
 const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [hasBusinessData, setHasBusinessData] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const checkAuth = async () => {
     try {
@@ -25,9 +27,16 @@ const Navbar = () => {
 
       const data = await response.json();
       setIsAuthenticated(data.isAuthenticated);
+
+      if (data.isAuthenticated && data.hasBusinessData) {
+        setHasBusinessData(true);
+      } else {
+        setHasBusinessData(false);
+      }
     } catch (error) {
       console.error('Auth check failed:', error);
       setIsAuthenticated(false);
+      setHasBusinessData(false);
     }
   };
 
@@ -42,12 +51,30 @@ const Navbar = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    
+    if (isAuthenticated) {
+      if (hasBusinessData) {
+        router.push('/pages/dashboard');
+      } else {
+        router.push('/pages/stage');
+      }
+    } else {
+      router.push('/');
+    }
+  };
+
   return (
     <nav className="bg-[#501214] text-white p-4 shadow-lg fixed top-0 w-full z-50 font-[Halis Grotesque]">
       <div className="container mx-auto flex justify-between items-center">
-      <Link href="/" className="text-xl font-bold text-white">
-        Hispanic Chatbot
-      </Link>
+      <a 
+          href="#" 
+          onClick={handleLogoClick} 
+          className="text-xl font-bold text-white cursor-pointer"
+        >
+          Hispanic Chatbot
+        </a>
         <div className="space-x-4">
           <Link href="/pages/dashboard" className="text-white hover:underline">Dashboard</Link>
           <Link href="/pages/about" className="text-white hover:underline">About</Link>

@@ -9,30 +9,38 @@ const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const pathname = usePathname();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch('/api/check-auth', {
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+  const checkAuth = async () => {
+    try {
+      const response = await fetch('/api/check-auth', {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+      });
 
-        if (!response.ok) {
-          throw new Error('Auth check failed');
-        }
-
-        const data = await response.json();
-        setIsAuthenticated(data.isAuthenticated);
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        setIsAuthenticated(false);
+      if (!response.ok) {
+        throw new Error('Auth check failed');
       }
-    };
 
+      const data = await response.json();
+      setIsAuthenticated(data.isAuthenticated);
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      setIsAuthenticated(false);
+    }
+  };
+
+  // Check auth on initial load and when pathname changes
+  useEffect(() => {
     checkAuth();
   }, [pathname]);
+
+  // Add an interval to periodically check auth status
+  useEffect(() => {
+    const interval = setInterval(checkAuth, 5000); // Check every 5 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <nav className="bg-[#501214] text-white p-4 shadow-lg fixed top-0 w-full z-50 font-[Halis Grotesque]">

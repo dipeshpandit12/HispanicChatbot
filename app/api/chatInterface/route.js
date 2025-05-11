@@ -2,22 +2,23 @@ import { NextResponse } from "next/server";
 import { connectToDB } from "@/utils/database";
 import jwt from "jsonwebtoken";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import IssuesAndResources from '@/models/issuesAndResources';
+import GrowthStrategy from '@/models/growthStrategies';
 import Business from "@/models/businessData";
+import BusinessStage from "@/models/BusinessStage";
 
 // Handle GET requests to fetch chat data
 export async function GET(req) {
   try {
     console.log("GET Chat data request received");
-    
+
     // Extract URL parameters
     const url = new URL(req.url);
     const source = url.searchParams.get('source');
     const courseId = url.searchParams.get('courseId');
     const problemId = url.searchParams.get('problemId');
-    
+
     console.log("URL parameters:", { source, courseId, problemId });
-    
+
     // Get authentication token
     const token = req.cookies.get('authToken')?.value;
     if (!token) {
@@ -35,41 +36,57 @@ export async function GET(req) {
     }
     const userId = decoded.userId;
     console.log("Authenticated user ID:", userId);
-    
+
     // Connect to database
     await connectToDB();
     console.log("Connected to database");
-    
-    // Get issues and resources for the user
-    const userIssues = await IssuesAndResources.findOne({ userId });
-    if (!userIssues) {
-      console.log("User issues not found for user ID:", userId);
-      return NextResponse.json({ error: "Issues not found for user" }, { status: 404 });
+
+    // Get user's business stage
+    const userStageData = await BusinessStage.findOne({ userId });
+    if (!userStageData) {
+      console.log("Business stage not found for user ID:", userId);
+      return NextResponse.json({ error: "Business stage not found for user" }, { status: 404 });
+    }
+
+    const userStage = userStageData.stage; // 'beginner', 'intermediate', or 'advanced'
+    console.log("User stage:", userStage);
+
+    // Get growth strategies for the user's stage
+    const stageStrategies = await GrowthStrategy.find({ stage: userStage });
+    if (!stageStrategies || stageStrategies.length === 0) {
+      console.log("No growth strategies found for stage:", userStage);
+      return NextResponse.json({ error: "No strategies found for user's stage" }, { status: 404 });
     }
 
     // Return specific problem if problemId is provided
     if (problemId) {
-      const matchingIssue = userIssues.issuesList.find(
-        issue => issue.problem.id === problemId
+      const matchingStrategy = stageStrategies.find(
+        strategy => strategy.problem.id === problemId
       );
 
-      if (!matchingIssue) {
+      if (!matchingStrategy) {
         console.log("Problem not found with ID:", problemId);
         return NextResponse.json({ error: "Problem not found" }, { status: 404 });
       }
       
-      console.log("Found matching issue:", matchingIssue.problem.title);
+      console.log("Found matching strategy:", matchingStrategy.problem.title);
       
       return NextResponse.json({
-        problem: matchingIssue.problem,
-        solution: matchingIssue.solution,
+        problem: matchingStrategy.problem,
+        solution: matchingStrategy.solution,
         sourceInfo: { source, courseId }
       });
     }
     
-    // Return all issues if no problemId
+    // Return all strategies if no problemId
+    // Map to maintain the same response format as before
+    const formattedStrategies = stageStrategies.map(strategy => ({
+      problem: strategy.problem,
+      solution: strategy.solution
+    }));
+    
     return NextResponse.json({
-      issues: userIssues.issuesList,
+      issues: formattedStrategies,
       sourceInfo: { source, courseId }
     });
     
@@ -122,23 +139,34 @@ export async function POST(req) {
     await connectToDB();
     console.log("Connected to database");
     
-    // Get problem context for better AI responses
-    const userIssues = await IssuesAndResources.findOne({ userId });
-    if (!userIssues) {
-      console.log("User issues not found for user ID:", userId);
-      return NextResponse.json({ error: "Issues not found for user" }, { status: 404 });
+    // Get user's business stage
+    const userStageData = await BusinessStage.findOne({ userId });
+    if (!userStageData) {
+      console.log("Business stage not found for user ID:", userId);
+      return NextResponse.json({ error: "Business stage not found for user" }, { status: 404 });
+    }
+    
+    const userStage = userStageData.stage; // 'beginner', 'intermediate', or 'advanced'
+    console.log("User stage:", userStage);
+    
+    // Get growth strategies for the user's stage
+    const stageStrategies = await GrowthStrategy.find({ stage: userStage });
+    if (!stageStrategies || stageStrategies.length === 0) {
+      console.log("No growth strategies found for stage:", userStage);
+      return NextResponse.json({ error: "No strategies found for user's stage" }, { status: 404 });
     }
 
-    const matchingIssue = userIssues.issuesList.find(
-      issue => issue.problem.id === problemId
+    // Find the specific problem
+    const matchingStrategy = stageStrategies.find(
+      strategy => strategy.problem.id === problemId
     );
 
-    if (!matchingIssue) {
+    if (!matchingStrategy) {
       console.log("Problem not found with ID:", problemId);
       return NextResponse.json({ error: "Problem not found" }, { status: 404 });
     }
     
-    console.log("Found matching issue:", matchingIssue.problem.title);
+    console.log("Found matching strategy:", matchingStrategy.problem.title);
 
     // Get business data for the user
     const businessData = await Business.findOne({ userId });
@@ -154,6 +182,7 @@ export async function POST(req) {
     if (businessData) {
       businessContext = `
       Business Information:
+      - Growth Stage: ${userStage} (important context for tailoring advice)
       - Industry: ${businessData.industry || "Not specified"}
       - Employee Size: ${businessData.employeeSize || "Not specified"}
       - Location: ${businessData.businessLocation || "Not specified"}
@@ -186,11 +215,11 @@ export async function POST(req) {
       // Create contextual prompt with all necessary information
       const fullPrompt = `
       You are a helpful AI assistant for Hispanic business owners. 
-      You are providing guidance about "${matchingIssue.problem.title}".
+      You are providing guidance about "${matchingStrategy.problem.title}" for a ${userStage}-level business.
       
-      Problem description: ${matchingIssue.problem.description}
+      Problem description: ${matchingStrategy.problem.description}
       
-      Recommended solution: ${matchingIssue.solution.title} - ${matchingIssue.solution.description}
+      Recommended solution: ${matchingStrategy.solution.title} - ${matchingStrategy.solution.description}
       
       ${businessContext}
       
@@ -200,14 +229,15 @@ export async function POST(req) {
       User's current message: ${message}
       
       Before responding, follow these pre-checking criteria:
-      1. Verify that your response directly addresses the specific business problem identified in "matchingIssue.problem.title" and "matchingIssue.problem.description"
-      2. Ensure your advice incorporates elements from the "matchingIssue.solution.title" and "matchingIssue.solution.description"
+      1. Verify that your response directly addresses the specific business problem identified in "matchingStrategy.problem.title" and "matchingStrategy.problem.description"
+      2. Ensure your advice incorporates elements from the "matchingStrategy.solution.title" and "matchingStrategy.solution.description"
       3. Check that your response builds logically on any previous conversation context
       4. Confirm your advice is culturally relevant and practical for Hispanic business owners
       5. Make sure your response addresses the user's current message specifically
       6. Use the specific business data provided (industry, size, location, social media usage, etc.) to tailor your advice
       7. Focus on providing personalized recommendations that take into account the business's unique situation
       8. Consider the specific needs, challenges, and goals expressed in the business data
+      9. Ensure your guidance is appropriate for their business growth stage: ${userStage}
       
       Please respond in a helpful, concise, and practical way. Focus on providing actionable advice relevant to this specific Hispanic business owner's needs based on their business data. If you don't know something, admit it rather than making up information.`;
       console.log("Sending message to Gemini with prompt length:", fullPrompt.length);
@@ -217,39 +247,37 @@ export async function POST(req) {
         model: "gemini-2.0-flash",
         generationConfig: {
           temperature: 0.4,
-          maxOutputTokens: 800, // Increased from 100 to allow more detailed responses
+          maxOutputTokens: 800,
         },
       });
-      
+
       const result = await model.generateContent(fullPrompt);
       const response = await result.response;
       const responseText = response.text();
-      
+
       console.log("Response text length:", responseText.length);
       console.log("Response preview:", responseText.substring(0, 100) + "...");
-      
-      return NextResponse.json({ 
+
+      return NextResponse.json({
         success: true,
         response: responseText
       });
     } catch (genAIError) {
       console.error("Gemini API Error:", genAIError);
-      
-      // Better error response
+
       return NextResponse.json(
         {
           success: false,
           error: "AI model error",
           message: genAIError.message || "Failed to generate AI response",
         },
-        { status: 502 } // Bad Gateway for external service failure
+        { status: 502 }
       );
     }
 
   } catch (error) {
     console.error("POST API Error:", error);
 
-    // Return a valid JSON response even for errors
     return NextResponse.json(
       {
         success: false,

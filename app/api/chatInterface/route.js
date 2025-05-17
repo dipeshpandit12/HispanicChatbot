@@ -227,19 +227,27 @@ export async function POST(req) {
       ${chatHistory.map(msg => `${msg.type === 'user' ? 'User' : 'Assistant'}: ${msg.content}`).join('\n')}
       
       User's current message: ${message}
-      
-      Before responding, follow these pre-checking criteria:
+        Before responding, follow these pre-checking criteria:
       1. Verify that your response directly addresses the specific business problem identified in "matchingStrategy.problem.title" and "matchingStrategy.problem.description"
       2. Ensure your advice incorporates elements from the "matchingStrategy.solution.title" and "matchingStrategy.solution.description"
       3. Check that your response builds logically on any previous conversation context
       4. Confirm your advice is culturally relevant and practical for Hispanic business owners
       5. Make sure your response addresses the user's current message specifically
       6. Use the specific business data provided (industry, size, location, social media usage, etc.) to tailor your advice
-      7. Focus on providing personalized recommendations that take into account the business's unique situation
-      8. Consider the specific needs, challenges, and goals expressed in the business data
+      7. Focus on providing personalized recommendations that take into account the business's unique situation      8. Consider the specific needs, challenges, and goals expressed in the business data
       9. Ensure your guidance is appropriate for their business growth stage: ${userStage}
+      10. Include appropriate emojis throughout your response to make it more engaging and visually appealing. Choose emojis that match the content (e.g., 📊 for data/metrics, 💡 for ideas/tips, ✅ for action items, 🚀 for growth strategies, 🔍 for analysis, 📱 for social media, 📝 for content creation, 💼 for business concepts)
       
-      Please respond in a helpful, concise, and practical way. Focus on providing actionable advice relevant to this specific Hispanic business owner's needs based on their business data. If you don't know something, admit it rather than making up information.`;
+      Please respond in a helpful, concise, and practical way. Follow these IMPORTANT formatting rules:
+      - DO NOT use any asterisks (*) anywhere in your response
+      - DO NOT use Markdown formatting like **bold** or *italic* - instead use plain text
+      - DO NOT use greater-than symbols (>) for blockquotes or examples
+      - For lists, use emojis or dashes (-) at the beginning of each point, never asterisks
+      - For examples, use "Example:" followed by text with no special formatting
+      - Format list items like this: "📝 First point" or "- First point" (no asterisks)
+      - Choose emojis that logically relate to the content of each point
+      
+      Keep your response engaging but focus on clarity and removing any special characters that could cause formatting issues. Provide actionable advice relevant to this specific Hispanic business owner's needs based on their business data. If you don't know something, admit it rather than making up information.`;
       console.log("Sending message to Gemini with prompt length:", fullPrompt.length);
       
       // Use the simplest Gemini model call instead of chat
@@ -249,12 +257,14 @@ export async function POST(req) {
           temperature: 0.4,
           maxOutputTokens: 800,
         },
-      });
-
-      const result = await model.generateContent(fullPrompt);
+      });      const result = await model.generateContent(fullPrompt);
       const response = await result.response;
-      const responseText = response.text();
-
+      let responseText = response.text();
+      
+      // Post-processing to remove any asterisks and blockquote formatting
+      responseText = responseText.replace(/\*/g, "");
+      responseText = responseText.replace(/>/g, "");
+      
       console.log("Response text length:", responseText.length);
       console.log("Response preview:", responseText.substring(0, 100) + "...");
 

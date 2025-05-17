@@ -1,6 +1,4 @@
 'use client';
-
-
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Alert from '@/Components/Alert';
@@ -47,15 +45,19 @@ const StagePage = () => {
             }, 3000);
             return null;
         }
-    };
-
-    useEffect(() => {
+    };    useEffect(() => {
         const getStage = async () => {
             try {
                 const result = await fetchStage();
                 if (result) {
                     setStage(result);
                     setError(null);
+
+                    // Redirect to /contactJosh if stage is intermediate or advance
+                    if (result === 'intermediate' || result === 'advance') {
+                        router.push('/pages/contactJosh');
+                        return;
+                    }
                 }
             } catch (err: unknown) {
                 const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';

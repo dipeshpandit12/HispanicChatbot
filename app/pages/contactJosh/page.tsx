@@ -50,13 +50,12 @@ const ContactJoshPage = () => {
                 </a>
               </div>
             </div>
-            
             <p className="text-gray-600 mt-6">
               Please include your business name and a brief description of your current challenges or goals
               so Dr. Josh can prepare appropriately for your conversation.
             </p>
           </div>
-          
+
           <div className="text-center mt-8">
             <Link href="/">
               <button className="px-6 py-3 rounded-lg shadow-md text-white transition duration-200 bg-[#007096] hover:bg-[#005f73]">

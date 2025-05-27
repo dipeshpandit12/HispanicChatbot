@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { connectToDB } from "@/utils/database";
 import User from "@/models/user";
+import { sendCourseInvitationOnLogin } from "@/utils/canvasEnrollment";
 
 export async function POST(req) {
     try {
@@ -38,10 +39,18 @@ export async function POST(req) {
             password: hashedPassword,
         });
 
+        // Enroll user to canvas after successful signup
+        try {
+            await sendCourseInvitationOnLogin(email);
+        } catch (invitationError) {
+            console.error('Canvas invitation error:', invitationError);
+        }
+
         return NextResponse.json(
             { message: "Signup successful", userId: newUser._id },
             { status: 201 }
         );
+
     } catch (error) {
         console.error("Error processing signup:", error);
         return NextResponse.json(

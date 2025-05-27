@@ -39,19 +39,18 @@ export async function POST(req) {
             password: hashedPassword,
         });
 
-        // Send Canvas course invitation after successful signup
+        // Enroll user to canvas after successful signup
         try {
             await sendCourseInvitationOnLogin(email);
-            console.log(`Canvas invitation sent to ${email}`);
         } catch (invitationError) {
             console.error('Canvas invitation error:', invitationError);
-            // Continue with signup process even if invitation fails
         }
 
         return NextResponse.json(
             { message: "Signup successful", userId: newUser._id },
             { status: 201 }
         );
+
     } catch (error) {
         console.error("Error processing signup:", error);
         return NextResponse.json(
